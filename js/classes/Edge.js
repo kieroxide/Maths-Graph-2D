@@ -1,7 +1,7 @@
 class Edge{
     constructor(vertexTo, vertexFrom){
-        this.vertexTo;
-        this.vertexFrom;
+        this.vertexTo = vertexTo;
+        this.vertexFrom = vertexFrom;
     }
 
     draw(){
