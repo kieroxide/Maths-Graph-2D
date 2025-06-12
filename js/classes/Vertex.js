@@ -1,5 +1,5 @@
 class Vertex {
-    constructor(nextID, radius = 30, mass = 1){
+    constructor(nextID, radius = 30, mass = 200){
         this.id = nextID;
 
         this.x = 400;
@@ -29,6 +29,9 @@ class Vertex {
 
         this.x += this.vx;
         this.y += this.vy;
+
+        this.position.x = this.x;
+        this.position.y = this.y;
     }
     draw(){
         ctx.beginPath();

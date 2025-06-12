@@ -5,8 +5,15 @@ class Graph{
         this.vertices = [];
         this.vertexRadius = 30;
 
-        this.distanceThreshold = this.vertexRadius * 2;
+        this.distanceThreshold = 50;
         this.maxForce = 1;
+    }
+    updateVertexPosition(){
+        for(const vertex of this.vertices){
+            vertex.updatePosition();
+            vertex.fx = 0;
+            vertex.fy = 0;
+        }
     }
     applyVertexPhysics(){
         //could optimise to only do it in pairs 
@@ -19,20 +26,16 @@ class Graph{
 
                     if(distanceBetween < this.distanceThreshold){
                         const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                        if(distanceBetween === 0) distanceBetween = 5;
-                        const forceMagnitude = Math.min(500 / (distanceBetween ** 2), this.maxForce);
+                        if(distanceBetween === 0) distanceBetween = 20;
+                        const forceMagnitude = Math.min(1 / (distanceBetween ** 2),0.0002);
                         const forceX = vectorAB.x * forceMagnitude;
                         const forceY = vectorAB.y * forceMagnitude;
-
+                        console.log(forceMagnitude);
                         vertexA.fx -= forceX;
                         vertexA.fy -= forceY;
 
                         vertexB.fx += forceX;
                         vertexB.fy += forceY;
-
-                        vertexA.updatePosition();
-                        vertexB.updatePosition();
-
                     }
                 }
             }
@@ -46,22 +49,21 @@ class Graph{
             const pointB = vertexB.position;
             const vectorAB = Math2D.vectorFrom(pointA, pointB);
             const distanceBetween = Math2D.distanceBetween(pointA, pointB);
-
-            const forceMagnitude = 500000 * (distanceBetween - 50);
+            let forceMagnitude = Math.min( 1 * (distanceBetween), 0.0001);
             const forceX = vectorAB.x * forceMagnitude;
             const forceY = vectorAB.y * forceMagnitude;
+            console.log(forceMagnitude);
             vertexA.fx += forceX;
             vertexA.fy += forceY;
             vertexB.fx -= forceX;
             vertexB.fy -= forceY;
-            vertexA.updatePosition();
-            vertexB.updatePosition();
         }
     }
     draw(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         this.applyVertexPhysics();
         this.applyEdgePhysics();
+        this.updateVertexPosition();
         for(const vertex of this.vertices){
             vertex.draw();
         }
