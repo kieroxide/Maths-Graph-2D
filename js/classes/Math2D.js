@@ -1,0 +1,29 @@
+class Math2D {
+    static distanceBetween(pointA, pointB){
+        const dx = Math.abs(pointA.x - pointB.x);
+        const dy = Math.abs(pointA.y - pointB.y);
+        return Math.sqrt( (dx ** 2) + (dy ** 2) );
+    }
+/*  Gets Vector from pointA to pointB
+ *  Normalises the Vector
+ */
+    static vectorFrom(pointA, pointB){
+        const dx = pointB.x - pointA.x;
+        const dy = pointB.y - pointA.y;
+        let vector = new Point2D(dx , dy);
+        vector = this.normalizeVector(vector);
+        return vector;
+    }
+
+    static normalizeVector(vector){
+        let vectorN = new Point2D(0, 0);
+        const length = Math.sqrt(vector.x ** 2 + vector.y ** 2);
+        if (length === 0) {
+            const angle = Math.random() * 2 * Math.PI;
+            return new Point2D(Math.cos(angle), Math.sin(angle));
+        }
+        vectorN.x = vector.x / length;
+        vectorN.y = vector.y / length;
+        return vectorN;
+    }
+}

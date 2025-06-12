@@ -6,6 +6,7 @@ let ctx;
 let graph = new Graph();
 graph.addVertex();
 graph.addVertex();
+graph.addEdge(0,1);
 //edges and vertices for testing
 
 const vertices = [
@@ -35,6 +36,7 @@ function setup(){
 
 function draw(){
     graph.draw();
+    console.log(graph);
     requestAnimationFrame(draw);
 }
 

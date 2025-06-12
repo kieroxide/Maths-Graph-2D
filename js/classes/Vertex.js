@@ -1,11 +1,35 @@
 class Vertex {
-    constructor(nextID, radius = 30){
+    constructor(nextID, radius = 30, mass = 1){
         this.id = nextID;
+
         this.x = 400;
         this.y = 400;
-        this.radius = radius;
-    }
+        this.position = new Point2D(this.x , this.y)
 
+        this.radius = radius;
+        this.mass = mass;
+
+        //force
+        this.fx = 0;
+        this.fy = 0;
+        //acceleration
+        this.ax = 0;
+        this.ay = 0;
+        //velocity
+        this.vx = 0;
+        this.vy = 0;
+
+    }
+    updatePosition(){
+        this.ax = this.fx * this.mass;
+        this.ay = this.fy * this.mass;
+
+        this.vx += this.ax;
+        this.vy += this.ay;
+
+        this.x += this.vx;
+        this.y += this.vy;
+    }
     draw(){
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); 
