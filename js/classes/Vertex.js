@@ -26,7 +26,8 @@ class Vertex {
 
         this.vx += this.ax;
         this.vy += this.ay;
-
+        this.vx *= 0.1;
+        this.vy *= 0.1;
         this.x += this.vx;
         this.y += this.vy;
 

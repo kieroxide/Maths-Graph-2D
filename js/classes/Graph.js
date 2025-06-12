@@ -26,8 +26,8 @@ class Graph{
 
                     if(distanceBetween < this.distanceThreshold){
                         const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                        if(distanceBetween === 0) distanceBetween = 20;
-                        const forceMagnitude = Math.min(1 / (distanceBetween ** 2),0.0002);
+                        if(distanceBetween === 0) distanceBetween = 1;
+                        const forceMagnitude = 5;
                         const forceX = vectorAB.x * forceMagnitude;
                         const forceY = vectorAB.y * forceMagnitude;
                         console.log(forceMagnitude);
@@ -49,12 +49,13 @@ class Graph{
             const pointB = vertexB.position;
             const vectorAB = Math2D.vectorFrom(pointA, pointB);
             const distanceBetween = Math2D.distanceBetween(pointA, pointB);
-            let forceMagnitude = Math.min( 1 * (distanceBetween), 0.0001);
+            let forceMagnitude = 5;
             const forceX = vectorAB.x * forceMagnitude;
             const forceY = vectorAB.y * forceMagnitude;
             console.log(forceMagnitude);
             vertexA.fx += forceX;
             vertexA.fy += forceY;
+            
             vertexB.fx -= forceX;
             vertexB.fy -= forceY;
         }
