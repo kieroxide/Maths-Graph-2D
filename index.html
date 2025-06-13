@@ -6,7 +6,10 @@
     <title>2D Graph Viewer</title>
 </head>
 <body>
-    <canvas id="graphCanvas" width="800" height="600"></canvas>
+    <input id="id1" type="number" placeholder="From ID">
+    <input id="id2" type="number" placeholder="To ID">
+    <button onclick="addEdgeFromInputs()">Add Edge</button>
+    <canvas id="graphCanvas" width="600" height="600" ></canvas>
     <script src="js/classes/Math2D.js"></script>
     <script src="js/classes/Point2D.js"></script>
     <script src="js/classes/Vertex.js"></script>

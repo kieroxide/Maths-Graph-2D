@@ -3,7 +3,7 @@ class Graph{
         this.nextID = 0;
         this.edges = [];
         this.vertices = [];
-        this.vertexRadius = 30;
+        this.vertexRadius = 20;
         this.maxForce = 1;
     }
     updateVertexPosition(){
@@ -23,9 +23,10 @@ class Graph{
                     let distanceBetween = Math2D.distanceBetween(pointA, pointB);
 
                     if(distanceBetween < sweetSpot){
+                        const diff = sweetSpot - distanceBetween;
                         const vectorAB = Math2D.vectorFrom(pointA, pointB);
                         if(distanceBetween === 0) distanceBetween = 1;
-                        const forceMagnitude = Math.min(2 / distanceBetween, 2); 
+                        const forceMagnitude = Math.min(500 / diff ** 2, 2); 
                         const forceX = vectorAB.x * forceMagnitude;
                         const forceY = vectorAB.y * forceMagnitude;
                         console.log(forceMagnitude);
@@ -63,12 +64,27 @@ class Graph{
         }
     }
     applyBoundaryPhysics(){
-        
+        const bound = 20;
+        for(const vertex of this.vertices){
+            if(vertex.x < bound + vertex.radius){
+                vertex.fx += 1;
+            }
+            if(vertex.y < bound + vertex.radius){
+                vertex.fy += 1;
+            }
+            if(vertex.x + vertex.radius > canvas.width - bound){
+                vertex.fx -= 1;
+            }
+            if(vertex.y + vertex.radius > canvas.height - bound){
+                vertex.fy -= 1;
+            }
+        }
     }
     draw(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         this.applyVertexPhysics();
         this.applyEdgePhysics();
+        this.applyBoundaryPhysics();
         this.updateVertexPosition();
         for(const edge of this.edges){
             edge.draw();
@@ -85,7 +101,7 @@ class Graph{
         this.edges.push(edge); 
     }
     addVertex(){
-        const vertex = new Vertex(this.getNextID(), this.radius);
+        const vertex = new Vertex(this.getNextID(), this.vertexRadius);
         this.vertices.push(vertex);
     }
     getNextID(){

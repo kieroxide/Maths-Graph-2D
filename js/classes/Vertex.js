@@ -8,7 +8,7 @@ class Vertex {
 
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed = 4;
+        this.maxSpeed =2.5;
 
         //force
         this.fx = 0;
@@ -36,8 +36,8 @@ class Vertex {
             this.vy *= scale;
         }
 
-        if(Math.abs(this.vx) > 3)  this.x += this.vx;
-        if(Math.abs(this.vy) > 3)  this.y += this.vy;
+        if(Math.abs(this.vx) > 2)  this.x += this.vx;
+        if(Math.abs(this.vy) > 2)  this.y += this.vy;
 
         this.vx *= 0.1;
         this.vy *= 0.1;
