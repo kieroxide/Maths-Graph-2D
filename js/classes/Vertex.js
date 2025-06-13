@@ -8,6 +8,7 @@ class Vertex {
 
         this.radius = radius;
         this.mass = mass;
+        this.maxSpeed = 4;
 
         //force
         this.fx = 0;
@@ -26,14 +27,28 @@ class Vertex {
 
         this.vx += this.ax;
         this.vy += this.ay;
+
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        
+        if (speed > this.maxSpeed ) {
+            const scale = this.maxSpeed / speed;
+            this.vx *= scale;
+            this.vy *= scale;
+        }
+
+        if(Math.abs(this.vx) > 3)  this.x += this.vx;
+        if(Math.abs(this.vy) > 3)  this.y += this.vy;
+
         this.vx *= 0.1;
         this.vy *= 0.1;
-        this.x += this.vx;
-        this.y += this.vy;
 
         this.position.x = this.x;
         this.position.y = this.y;
+
+        this.fx = 0; 
+        this.fy = 0;
     }
+
     draw(){
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); 
