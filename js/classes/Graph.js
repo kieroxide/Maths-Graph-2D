@@ -5,6 +5,70 @@ class Graph{
         this.vertices = [];
         this.vertexRadius = 20;
         this.maxForce = 1;
+        this.vertexPushCoefficent = 500;
+        this.edgePullCoefficent = 0.00001;
+        this.forceConstant = 20;
+        this.groups = [];
+        this.boundaryForce = 1000;
+    }
+    groupingPhysics(){
+        const groups = this.groups;
+        for(const group of groups){
+            const n = group.length;
+            for(let i = 0; i < n; i++){
+                for(let j = i + 1; j < n; j++){
+                    const vertexA = group[i];
+                    const vertexB = group[j];
+
+                    const pointA = vertexA.position;
+                    const pointB = vertexB.position;
+
+                    const distanceBetween = Math2D.distanceBetween(pointA, pointB);
+    
+                    // Apply force only if vertices are farther apart than the sweet spot
+                    if(distanceBetween > sweetSpot - 20){
+                        // Get vector from A to B
+                        const vectorAB = Math2D.vectorFrom(pointA, pointB);
+    
+                        // Calculate force magnitude proportional to how far beyond sweet spot
+                        let forceMagnitude = this.forceConstant * this.edgePullCoefficent * (distanceBetween - 20);
+    
+                        // Calculate force components in x and y directions
+                        const forceX = vectorAB.x * forceMagnitude;
+                        const forceY = vectorAB.y * forceMagnitude;
+    
+                        // Apply force to vertex A
+                        vertexA.fx += forceX;
+                        vertexA.fy += forceY;
+    
+                        // Apply equal and opposite force to vertex B
+                        vertexB.fx -= forceX;
+                        vertexB.fy -= forceY;
+                    }
+                }
+            }
+        }
+    }
+    checkRotations(){
+        const forceThreshold = 1; // tweak to your scale
+        const velocityThreshold = 1;
+        const rotationStrength = 0.05;
+        const vertices = this.vertices;
+        for (const v of vertices) {
+            const forceMag = Math.sqrt(v.fx * v.fx + v.fy * v.fy);
+            const velMag = Math.sqrt(v.vx * v.vx + v.vy * v.vy);
+        
+            if (forceMag > forceThreshold && velMag < velocityThreshold) {
+                // Rotate force vector by 90 or 270 degrees randomly
+                const direction = 1;
+                const rotFx = -v.fy * rotationStrength * direction;
+                const rotFy = v.fx * rotationStrength * direction;
+                // Add rotational force
+                v.fx += rotFx;
+                v.fy += rotFy;
+            }
+        }
+
     }
     updateVertexPosition(){
         for(const vertex of this.vertices){
@@ -14,28 +78,32 @@ class Graph{
         }
     }
     applyVertexPhysics(){
-        //could optimise to only do it in pairs 
-        for(const vertexA of this.vertices){
-            for(const vertexB of this.vertices){
-                if(vertexA !== vertexB){
-                    const pointA = vertexA.position;
-                    const pointB = vertexB.position;
-                    let distanceBetween = Math2D.distanceBetween(pointA, pointB);
-
-                    if(distanceBetween < sweetSpot){
-                        const diff = sweetSpot - distanceBetween;
-                        const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                        if(distanceBetween === 0) distanceBetween = 1;
-                        const forceMagnitude = Math.min(500 / diff ** 2, 2); 
-                        const forceX = vectorAB.x * forceMagnitude;
-                        const forceY = vectorAB.y * forceMagnitude;
-                        console.log(forceMagnitude);
-                        vertexA.fx -= forceX;
-                        vertexA.fy -= forceY;
-
-                        vertexB.fx += forceX;
-                        vertexB.fy += forceY;
-                    }
+        const vertices = this.vertices;
+        const n = vertices.length;
+        //nested dependant loop for performing repulsion on pairs once
+        for(let i = 0; i < n; i++){
+            const vertexA = vertices[i];
+            for(let j = i + 1; j < n; j++){
+                const vertexB = vertices[j];
+                //Calculates distance between points
+                const pointA = vertexA.position;
+                const pointB = vertexB.position;
+                let distance = Math2D.distanceBetween(pointA, pointB);
+                
+                if(distance === 0) distance = 0.01; // division by zero avoidance
+                //if distance too close 
+                if(distance < sweetSpot){
+                    //calculates repulsion force vector
+                    const forceMagnitude = this.forceConstant * this.vertexPushCoefficent / distance**2;
+                    const vectorAB = Math2D.vectorFrom(pointA, pointB);
+                    const fx = vectorAB.x * forceMagnitude;
+                    const fy = vectorAB.y * forceMagnitude;
+                    //applies force pointing from B to A
+                    vertexA.fx -= fx;
+                    vertexA.fy -= fy;
+                    //applies force pointing from A to B
+                    vertexB.fx += fx;
+                    vertexB.fy += fy;
                 }
             }
         }
@@ -47,36 +115,44 @@ class Graph{
             const pointA = vertexA.position;
             const pointB = vertexB.position;
             const distanceBetween = Math2D.distanceBetween(pointA, pointB);
+
+            // Apply force only if vertices are farther apart than the sweet spot
             if(distanceBetween > sweetSpot){
-                const diff = -(sweetSpot - distanceBetween) * 0.01;
+                // Get vector from A to B
                 const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                let forceMagnitude = Math.min(diff*distanceBetween * 0.001, 1);
+
+                // Calculate force magnitude proportional to how far beyond sweet spot
+                let forceMagnitude = this.forceConstant * this.edgePullCoefficent * (distanceBetween - sweetSpot) * 2;
+
+                // Calculate force components in x and y directions
                 const forceX = vectorAB.x * forceMagnitude;
                 const forceY = vectorAB.y * forceMagnitude;
-                console.log(forceMagnitude);
+
+                // Apply force to vertex A
                 vertexA.fx += forceX;
                 vertexA.fy += forceY;
-                
+
+                // Apply equal and opposite force to vertex B
                 vertexB.fx -= forceX;
                 vertexB.fy -= forceY;
-
             }
         }
     }
+
     applyBoundaryPhysics(){
         const bound = 20;
         for(const vertex of this.vertices){
             if(vertex.x < bound + vertex.radius){
-                vertex.fx += 1;
+                vertex.fx += this.boundaryForce;
             }
             if(vertex.y < bound + vertex.radius){
-                vertex.fy += 1;
+                vertex.fy += this.boundaryForce;
             }
             if(vertex.x + vertex.radius > canvas.width - bound){
-                vertex.fx -= 1;
+                vertex.fx -= this.boundaryForce;
             }
             if(vertex.y + vertex.radius > canvas.height - bound){
-                vertex.fy -= 1;
+                vertex.fy -= this.boundaryForce;
             }
         }
     }
@@ -85,6 +161,8 @@ class Graph{
         this.applyVertexPhysics();
         this.applyEdgePhysics();
         this.applyBoundaryPhysics();
+        this.checkRotations();
+        this.groupingPhysics();
         this.updateVertexPosition();
         for(const edge of this.edges){
             edge.draw();
@@ -93,6 +171,14 @@ class Graph{
             vertex.draw();
         }
     }   
+    assignNeighbours(){
+        const vertices = this.vertices;
+        const edges = this.edges;
+        for(const edge of edges){
+            //adds to neighbour set
+            edge.vertexTo.neighboursID.add(edge.vertexFrom.id);
+        }
+    }
     addEdge(idTo , idFrom){
         if(this.vertices.length < 1){
             console.log("0 vertices to create edge for");

@@ -1,7 +1,7 @@
 let canvas;
 let ctx;
 let graph = new Graph();
-let sweetSpot = 120;
+let sweetSpot = graph.vertexRadius * 5;
 
 
 graph.addVertex();
@@ -28,6 +28,8 @@ const edges = [
 ];
 
 getVerticesAndEdges()
+graph.assignNeighbours();
+graph.groups = Math2D.bfs(graph, 1);
 
 function setup(){
     canvas = document.getElementById('graphCanvas');
@@ -36,7 +38,6 @@ function setup(){
 
 function draw(){
     graph.draw();
-    console.log(graph);
     requestAnimationFrame(draw);
 }
 
@@ -55,6 +56,7 @@ function addEdgeFromInputs() {
     const id2 = parseInt(document.getElementById('id2').value);
     if (!isNaN(id1) && !isNaN(id2)) {
         graph.addEdge(id1, id2);
+        graph.groups = Math2D.bfs(graph, 1);
     }
 }
 

@@ -1,4 +1,29 @@
 class Math2D {
+    static bfs(graph, depth){
+        const vertices = graph.vertices;
+        const n = vertices.length;
+        const edges = graph.edges;
+        const visited = new Set();
+        const groupings = [];
+        for(let i = 0; i < n; i++){
+            const currentVertex = vertices[i];
+            if(!(visited.has(currentVertex.id))){
+                visited.add(currentVertex.id);
+                const vertexGroup = [currentVertex];
+                for(let j = 0; j < depth; j++){
+                    for(const neighbourID of currentVertex.neighboursID){
+                        if(!visited.has(neighbourID)){
+                            const neighbour = vertices[neighbourID];
+                            vertexGroup.push(neighbour);
+                            visited.add(neighbourID);
+                        }
+                    }
+                }
+                groupings.push(vertexGroup);
+            }
+        }
+        return groupings;
+    }
     static distanceBetween(pointA, pointB){
         const dx = Math.abs(pointA.x - pointB.x);
         const dy = Math.abs(pointA.y - pointB.y);
