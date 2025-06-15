@@ -2,13 +2,13 @@ class Vertex {
     constructor(nextID, radius = 30, mass = 200){
         this.id = nextID;
         this.degrees = 0;
-        this.x = 400;
-        this.y = 400;
+        this.x = 300;
+        this.y = 300;
         this.position = new Point2D(this.x , this.y)
         this.neighboursID = new Set();
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed =2.5;
+        this.maxSpeed = 3;
 
         //force
         this.fx = 0;
@@ -22,6 +22,8 @@ class Vertex {
 
     }
     updatePosition(){
+        this.fx = Math.min(1, this.fx);
+        this.fy = Math.min(1, this.fy);
         this.ax = this.fx * this.mass;
         this.ay = this.fy * this.mass;
 
@@ -36,11 +38,11 @@ class Vertex {
             this.vy *= scale;
         }
 
-        if(Math.abs(this.vx) > 2.1)  this.x += this.vx;
-        if(Math.abs(this.vy) > 2.1)  this.y += this.vy;
+        if(Math.abs(this.vx) > 1)  this.x += this.vx;
+        if(Math.abs(this.vy) > 1)  this.y += this.vy;
 
-        this.vx *= 0.75;
-        this.vy *= 0.75;
+        this.vx *= 0.1;
+        this.vy *= 0.1;
 
         this.position.x = this.x;
         this.position.y = this.y;

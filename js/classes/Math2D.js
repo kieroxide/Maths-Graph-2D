@@ -1,10 +1,41 @@
 class Math2D {
+    static getMidpoint(group){
+        let points = [];
+        for(const v of group){
+            points.push(v.position);
+        }
+
+        const n = points.length;
+        let sumX = 0;
+        let sumY = 0;
+        for(const point of points){
+            sumX += point.x;
+            sumY += point.y;
+        }
+        return new Point2D(sumX/n, sumY/n);
+    }
+    /*
+    direction is for attraction or repulsion;
+    */
+    static applyForce(vertexA, vertexB, forceMag, vectorAB, direction=1){
+        // Calculate force components in x and y directions
+        const forceX = vectorAB.x * forceMag * direction;
+        const forceY = vectorAB.y * forceMag * direction;
+
+        // Apply force to vertex A
+        vertexA.fx += forceX;
+        vertexA.fy += forceY;
+    
+        // Apply equal and opposite force to vertex B
+        vertexB.fx -= forceX;
+        vertexB.fy -= forceY;
+    }
     static hubConnections(graph){
-        const vertices = graph.vertices;
+        let vertices = graph.vertices;
         const n = vertices.length;
         const edges = graph.edges;
         const visited = new Set();
-        vertices.sort((a,b) => b.degrees - a.degrees);
+        vertices = [...vertices].sort((a,b) => b.degrees - a.degrees);
         console.log(vertices);
         const groupings = [];
         for(let i = 0; i < n; i++){
@@ -12,15 +43,13 @@ class Math2D {
             if(!(visited.has(currentVertex.id))){
                 visited.add(currentVertex.id);
                 const vertexGroup = [currentVertex];
-                for(let j = 0; j < depth; j++){
                     for(const neighbourID of currentVertex.neighboursID){
                         if(!visited.has(neighbourID)){
-                            const neighbour = vertices[neighbourID];
+                            const neighbour = graph.vertices[neighbourID];
                             vertexGroup.push(neighbour);
                             visited.add(neighbourID);
                         }
                     }
-                }
                 groupings.push(vertexGroup);
             }
         }

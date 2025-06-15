@@ -3,15 +3,41 @@ class Graph{
         this.nextID = 0;
         this.edges = [];
         this.vertices = [];
-        this.vertexRadius = 20;
+        this.vertexRadius = 30;
         this.maxForce = 1;
-        this.vertexPushCoefficent = 500;
+        this.vertexPushCoefficent = 10;
         this.edgePullCoefficent = 0.00001;
         this.forceConstant = 20;
         this.groups = [];
         this.boundaryForce = 1000;
     }
+    
+    groupRepulsion(){
+        const groups = this.groups;
+        const forceConstant = 0.001;
+        let groupMidpoints = [];
+        for(const group of groups){
+            groupMidpoints.push({group: group, midpoint : Math2D.getMidpoint(group)});
+        }
+        const n = groupMidpoints.length;
+        for(let i = 0; i < n; i++){
+            for(let j = i + 1; j < n; j++){
+                const groupA = groupMidpoints[0];
+                const groupB = groupMidpoints[1];
+                const vectorAB = Math2D.vectorFrom(groupA.midpoint, groupB.midpoint);
+                let distance = Math2D.distanceBetween(groupA.midpoint, groupB.midpoint)
+                if(distance === 0) distance = 0.01;
+                const forceMagnitude = forceConstant * this.vertexPushCoefficent/distance;
+                for(const vertexA of groupA.group){
+                    for(const vertexB of groupB.group){
+                        Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
+                    }
+                }
+            }
+        }
+    }
     groupingPhysics(){
+        const forceConstant = 20;
         const groups = this.groups;
         for(const group of groups){
             const n = group.length;
@@ -29,21 +55,10 @@ class Graph{
                     if(distanceBetween > sweetSpot - 20){
                         // Get vector from A to B
                         const vectorAB = Math2D.vectorFrom(pointA, pointB);
-    
                         // Calculate force magnitude proportional to how far beyond sweet spot
-                        let forceMagnitude = this.forceConstant * this.edgePullCoefficent * (distanceBetween - 20);
-    
-                        // Calculate force components in x and y directions
-                        const forceX = vectorAB.x * forceMagnitude;
-                        const forceY = vectorAB.y * forceMagnitude;
-    
-                        // Apply force to vertex A
-                        vertexA.fx += forceX;
-                        vertexA.fy += forceY;
-    
-                        // Apply equal and opposite force to vertex B
-                        vertexB.fx -= forceX;
-                        vertexB.fy -= forceY;
+                        let forceMagnitude = forceConstant * this.edgePullCoefficent * (distanceBetween - 20);
+                        //applies the force to the vertices
+                        Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
                     }
                 }
             }
@@ -96,14 +111,7 @@ class Graph{
                     //calculates repulsion force vector
                     const forceMagnitude = this.forceConstant * this.vertexPushCoefficent / distance**2;
                     const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                    const fx = vectorAB.x * forceMagnitude;
-                    const fy = vectorAB.y * forceMagnitude;
-                    //applies force pointing from B to A
-                    vertexA.fx -= fx;
-                    vertexA.fy -= fy;
-                    //applies force pointing from A to B
-                    vertexB.fx += fx;
-                    vertexB.fy += fy;
+                    Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
                 }
             }
         }
@@ -124,21 +132,10 @@ class Graph{
                 // Calculate force magnitude proportional to how far beyond sweet spot
                 let forceMagnitude = this.forceConstant * this.edgePullCoefficent * (distanceBetween - sweetSpot) * 2;
 
-                // Calculate force components in x and y directions
-                const forceX = vectorAB.x * forceMagnitude;
-                const forceY = vectorAB.y * forceMagnitude;
-
-                // Apply force to vertex A
-                vertexA.fx += forceX;
-                vertexA.fy += forceY;
-
-                // Apply equal and opposite force to vertex B
-                vertexB.fx -= forceX;
-                vertexB.fy -= forceY;
+                Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
             }
         }
     }
-
     applyBoundaryPhysics(){
         const bound = 20;
         for(const vertex of this.vertices){
@@ -163,6 +160,7 @@ class Graph{
         this.applyBoundaryPhysics();
         this.checkRotations();
         this.groupingPhysics();
+        this.groupRepulsion();
         this.updateVertexPosition();
         for(const edge of this.edges){
             edge.draw();
@@ -177,6 +175,7 @@ class Graph{
         for(const edge of edges){
             //adds to neighbour set
             edge.vertexTo.neighboursID.add(edge.vertexFrom.id);
+            edge.vertexFrom.neighboursID.add(edge.vertexTo.id);
         }
     }
     addEdge(idTo , idFrom){
@@ -184,6 +183,7 @@ class Graph{
             console.log("0 vertices to create edge for");
         }
         const edge = new Edge(this.vertices[idTo], this.vertices[idFrom]);
+        console.log(edge);
         this.edges.push(edge); 
     }
     addVertex(){
