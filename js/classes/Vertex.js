@@ -1,7 +1,7 @@
 class Vertex {
     constructor(nextID, radius = 30, mass = 200){
         this.id = nextID;
-
+        this.degrees = 0;
         this.x = 400;
         this.y = 400;
         this.position = new Point2D(this.x , this.y)

@@ -1,9 +1,11 @@
 class Math2D {
-    static bfs(graph, depth){
+    static hubConnections(graph){
         const vertices = graph.vertices;
         const n = vertices.length;
         const edges = graph.edges;
         const visited = new Set();
+        vertices.sort((a,b) => b.degrees - a.degrees);
+        console.log(vertices);
         const groupings = [];
         for(let i = 0; i < n; i++){
             const currentVertex = vertices[i];
@@ -23,6 +25,16 @@ class Math2D {
             }
         }
         return groupings;
+    }
+    static degreeCount(graph){
+        const edges = graph.edges;
+        for(const edge of edges){
+            const vertexA = edge.vertexTo;
+            const vertexB = edge.vertexFrom;
+            
+            vertexA.degrees++;
+            vertexB.degrees++;
+        }
     }
     static distanceBetween(pointA, pointB){
         const dx = Math.abs(pointA.x - pointB.x);

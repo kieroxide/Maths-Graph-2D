@@ -1,3 +1,5 @@
+"use strict";
+
 let canvas;
 let ctx;
 let graph = new Graph();
@@ -29,7 +31,8 @@ const edges = [
 
 getVerticesAndEdges()
 graph.assignNeighbours();
-graph.groups = Math2D.bfs(graph, 1);
+Math2D.degreeCount(graph);
+graph.groups = Math2D.hubConnections(graph);
 
 function setup(){
     canvas = document.getElementById('graphCanvas');
