@@ -286,4 +286,14 @@ class Graph{
         this.nextID++;
         return currentID;
     }
+    edgeExists(vertexTo, vertexFrom){
+        for(const edge of this.edges){
+            if((edge.vertexTo.id === vertexTo.id && edge.vertexFrom.id === vertexFrom.id) ||
+               (edge.vertexTo.id === vertexFrom.id && edge.vertexFrom.id === vertexTo.id)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

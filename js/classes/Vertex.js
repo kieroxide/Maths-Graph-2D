@@ -9,7 +9,7 @@ class Vertex {
         this.neighboursID = new Set();
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed = 20;
+        this.maxSpeed = 50;
 
         //force
         this.fx = 0;
@@ -23,7 +23,7 @@ class Vertex {
 
     }
     updatePosition(){
-
+        let maxSpeed = this.maxSpeed * temperature;
         this.ax = this.fx / this.mass;
         this.ay = this.fy / this.mass;
 
@@ -32,8 +32,8 @@ class Vertex {
 
         const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
         
-        if (speed > this.maxSpeed ) {
-            const scale = this.maxSpeed / speed;
+        if (speed > maxSpeed ) {
+            const scale = maxSpeed / speed;
             this.vx *= scale;
             this.vy *= scale;
         }
@@ -41,8 +41,8 @@ class Vertex {
         if(Math.abs(this.vx) > minSpeed)  this.x += this.vx;
         if(Math.abs(this.vy) > minSpeed)  this.y += this.vy;
 
-        this.vx *= 0.99;
-        this.vy *= 0.99;
+        this.vx *= 0.95;
+        this.vy *= 0.95;
 
         this.position.x = this.x;
         this.position.y = this.y;

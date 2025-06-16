@@ -1,5 +1,5 @@
 "use strict";
-
+let temperature = 1; // Global temperature variable
 let canvas;
 let ctx;
 let graph = new Graph();
@@ -19,7 +19,7 @@ const scaleMax = 5;
 
 
 const edges = [
-  { from: 0, to: 1 },
+    { from: 0, to: 1 },
   { from: 0, to: 2 },
   { from: 1, to: 3 },
   { from: 1, to: 4 },
@@ -37,11 +37,19 @@ const edges = [
 //Math2D.degreeCount(graph);
 //graph.groups = Math2D.hubConnections(graph);
 
-    function setup(){
-        canvas = document.getElementById('graphCanvas');
-        ctx = canvas.getContext('2d');
-        graph = generateTreeGraph(1000); // Generate a tree graph with 12 vertices
-
+function setup(){
+    canvas = document.getElementById('graphCanvas');
+    ctx = canvas.getContext('2d');
+    graph = generateTreeGraph(1500); // Generate a tree graph with n vertices
+    //graph = generateRandomConnectedGraph(graph, 1500, 100); // Generate a random connected graph with n vertices and extra edges
+    setInterval(() => {
+        temperature -= 0.0009; // Decrease temperature over time
+        if (temperature < 0.001) {
+            temperature = 0.001; // Prevent negative temperature
+        }
+        console.log(`Temperature: ${temperature}`);
+    }, 1); // 1000 milliseconds = 1 second
+        
         canvas.addEventListener('mousedown', (e) => {
             isPanning = true;
             const rect = canvas.getBoundingClientRect();
@@ -84,7 +92,7 @@ const edges = [
     // Vertex Push
     const vertexPushSlider = document.getElementById('vertexPushSlider');
     const vertexPushValue = document.getElementById('vertexPushValue');
-    vertexPushSlider.value = 20; // Set default
+    vertexPushSlider.value = 500; // Set default
     vertexPushSlider.oninput = function() {
         graph.vertexPushConstant = parseFloat(this.value);
         vertexPushValue.textContent = this.value;
@@ -147,7 +155,7 @@ const edges = [
     // Edges Push
     const edgesPushSlider = document.getElementById('edgesPushSlider');
     const edgesPushValue = document.getElementById('edgesPushValue');
-    edgesPushSlider.value = 0.1; // Set default
+    edgesPushSlider.value = 100; // Set default
     edgesPushSlider.oninput = function() {
         graph.edgesPushConstant = parseFloat(this.value);
         edgesPushValue.textContent = this.value;
@@ -242,6 +250,47 @@ function generateTreeGraph(numVertices) {
     
     return graph;
 }
+
+function generateRandomConnectedGraph(graph, nodes, extraEdges = 0) {
+    // Clear any existing graph
+    graph.vertices = [];
+    graph.edges = [];
+    graph.nextID = 0;
+
+    // Add vertices
+    for (let i = 0; i < nodes; i++) {
+        graph.addVertex();
+    }
+
+    // Ensure the graph is connected by creating a random spanning tree
+    let connected = [0];
+    let unconnected = [...Array(nodes).keys()].slice(1);
+
+    while (unconnected.length > 0) {
+        let from = connected[Math.floor(Math.random() * connected.length)];
+        let toIndex = Math.floor(Math.random() * unconnected.length);
+        let to = unconnected.splice(toIndex, 1)[0];
+
+        graph.addEdge(from, to);
+        connected.push(to);
+    }
+
+    // Add extra edges to create cycles
+    for (let i = 0; i < extraEdges; i++) {
+        let a = Math.floor(Math.random() * nodes);
+        let b = Math.floor(Math.random() * nodes);
+        if (a !== b && !graph.edgeExists(graph.vertices[a], graph.vertices[b])) {
+            graph.addEdge(a, b);
+        }
+    }
+
+    graph.assignNeighbours();
+    Math2D.degreeCount(graph);
+    graph.groups = Math2D.hubConnections(graph);
+    return graph;
+}
+
+
 
 setup();
 draw();
