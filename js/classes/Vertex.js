@@ -1,14 +1,15 @@
 class Vertex {
-    constructor(nextID, radius = 30, mass = 200){
+    constructor(nextID, radius = 30, mass = 0.001){
         this.id = nextID;
         this.degrees = 0;
-        this.x = 300;
-        this.y = 300;
+        // Randomize initial position
+        this.x = 300 + Math.random() * 100 - 50;
+        this.y = 300 + Math.random() * 100 - 50;
         this.position = new Point2D(this.x , this.y)
         this.neighboursID = new Set();
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed = 3;
+        this.maxSpeed = 2;
 
         //force
         this.fx = 0;
@@ -22,10 +23,9 @@ class Vertex {
 
     }
     updatePosition(){
-        this.fx = Math.min(1, this.fx);
-        this.fy = Math.min(1, this.fy);
-        this.ax = this.fx * this.mass;
-        this.ay = this.fy * this.mass;
+
+        this.ax = this.fx / this.mass;
+        this.ay = this.fy / this.mass;
 
         this.vx += this.ax;
         this.vy += this.ay;
@@ -38,11 +38,11 @@ class Vertex {
             this.vy *= scale;
         }
 
-        if(Math.abs(this.vx) > 1)  this.x += this.vx;
-        if(Math.abs(this.vy) > 1)  this.y += this.vy;
+        if(Math.abs(this.vx) > 0)  this.x += this.vx;
+        if(Math.abs(this.vy) > 0)  this.y += this.vy;
 
-        this.vx *= 0.1;
-        this.vy *= 0.1;
+        this.vx *= 0.95;
+        this.vy *= 0.95;
 
         this.position.x = this.x;
         this.position.y = this.y;
