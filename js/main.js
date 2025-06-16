@@ -3,10 +3,18 @@
 let canvas;
 let ctx;
 let graph = new Graph();
-let sweetSpot = graph.vertexRadius * 5;
+let sweetSpot = graph.vertexRadius * 1;
 
-graph.addVertex();
-graph.addVertex();
+let isPanning = false;
+let panStart = { x: 0, y: 0 };
+let panOffset = { x: 0, y: 0 };
+
+let scale = 1;
+const scaleMin = 0.2;
+const scaleMax = 5;
+
+//graph.addVertex();
+//graph.addVertex();
 //edges and vertices for testing
 
 
@@ -24,20 +32,59 @@ const edges = [
   { from: 6, to: 11 }
 ];
 
+//getVerticesAndEdges()
+//graph.assignNeighbours();
+//Math2D.degreeCount(graph);
+//graph.groups = Math2D.hubConnections(graph);
 
-getVerticesAndEdges()
-graph.assignNeighbours();
-Math2D.degreeCount(graph);
-graph.groups = Math2D.hubConnections(graph);
+    function setup(){
+        canvas = document.getElementById('graphCanvas');
+        ctx = canvas.getContext('2d');
+        graph = generateTreeGraph(1000); // Generate a tree graph with 12 vertices
 
-function setup(){
-    canvas = document.getElementById('graphCanvas');
-    ctx = canvas.getContext('2d');
+        canvas.addEventListener('mousedown', (e) => {
+            isPanning = true;
+            const rect = canvas.getBoundingClientRect();
+            panStart.x = e.clientX - rect.left - panOffset.x;
+            panStart.y = e.clientY - rect.top - panOffset.y;
+        });
 
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            const rect = canvas.getBoundingClientRect();
+            panOffset.x = e.clientX - rect.left - panStart.x;
+            panOffset.y = e.clientY - rect.top - panStart.y;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isPanning = false;
+        });
+        canvas.addEventListener('mouseleave', () => {
+            isPanning = false;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+      e.preventDefault(); // prevent page scroll
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const wheel = e.deltaY < 0 ? 1.1 : 0.9;
+
+      // Compute new scale, clamped
+      const newScale = Math.min(scaleMax, Math.max(scaleMin, scale * wheel));
+
+      // To zoom on mouse position, adjust panOffset to keep mouse in place
+      panOffset.x -= (mouseX - panOffset.x) * (newScale / scale - 1);
+      panOffset.y -= (mouseY - panOffset.y) * (newScale / scale - 1);
+
+      scale = newScale;
+    });
     // Vertex Push
     const vertexPushSlider = document.getElementById('vertexPushSlider');
     const vertexPushValue = document.getElementById('vertexPushValue');
-    vertexPushSlider.value = 100; // Set default
+    vertexPushSlider.value = 20; // Set default
     vertexPushSlider.oninput = function() {
         graph.vertexPushConstant = parseFloat(this.value);
         vertexPushValue.textContent = this.value;
@@ -64,7 +111,7 @@ function setup(){
     // Stall Rotation
     const stallRotationSlider = document.getElementById('stallRotationSlider');
     const stallRotationValue = document.getElementById('stallRotationValue');
-    stallRotationSlider.value = 0.05; // Set default
+    stallRotationSlider.value = 0.1; // Set default
     stallRotationSlider.oninput = function() {
         graph.stallRotationConstant = parseFloat(this.value);
         stallRotationValue.textContent = this.value;
@@ -82,7 +129,7 @@ function setup(){
     // Groups Push
     const groupsPushSlider = document.getElementById('groupsPushSlider');
     const groupsPushValue = document.getElementById('groupsPushValue');
-    groupsPushSlider.value = 10; // Set default
+    groupsPushSlider.value = 25; // Set default
     groupsPushSlider.oninput = function() {
         graph.groupsPushConstant = parseFloat(this.value);
         groupsPushValue.textContent = this.value;
@@ -91,7 +138,7 @@ function setup(){
     // Group Spacing
     const groupSpacingSlider = document.getElementById('groupSpacingSlider');
     const groupSpacingValue = document.getElementById('groupSpacingValue');
-    groupSpacingSlider.value = 0.1; // Set default
+    groupSpacingSlider.value = 5; // Set default
     groupSpacingSlider.oninput = function() {
         graph.groupSpacingConstant = parseFloat(this.value);
         groupSpacingValue.textContent = this.value;
@@ -109,7 +156,7 @@ function setup(){
     // Edge-Vertex Push
     const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
     const edgeVertPushValue = document.getElementById('edgeVertPushValue');
-    edgeVertPushSlider.value = 0.1; // Set default
+    edgeVertPushSlider.value = 100; // Set default
     edgeVertPushSlider.oninput = function() {
         graph.edgeVertPushConstant = parseFloat(this.value);
         edgeVertPushValue.textContent = this.value;
@@ -143,7 +190,11 @@ function draw(){
     let backgroundColour = '#FFFFF0';
     ctx.fillStyle = backgroundColour;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(panOffset.x, panOffset.y);
+    ctx.scale(scale, scale);   // Apply zoom scale here
     graph.draw();
+    ctx.restore();
     requestAnimationFrame(draw);
 }
 
@@ -164,6 +215,32 @@ function addEdgeFromInputs() {
         graph.addEdge(id1, id2);
         graph.groups = Math2D.bfs(graph, 1);
     }
+}
+
+function generateTreeGraph(numVertices) {
+    graph = new Graph(); // reset graph
+    
+    if (numVertices < 1) return;
+    
+    // Add all vertices first
+    for (let i = 0; i < numVertices; i++) {
+        graph.addVertex();
+    }
+    
+    // Connect vertices in a tree:
+    // For each vertex from 1 to N-1, connect it to a random previous vertex (parent)
+    for (let i = 1; i < numVertices; i++) {
+        // Pick a parent randomly from vertices already added (0 to i-1)
+        let parent = Math.floor(Math.random() * i);
+        graph.addEdge(parent, i);
+    }
+    
+    graph.assignNeighbours();
+    graph.groups = Math2D.hubConnections(graph); // Or your own grouping logic
+    
+    // Reset any other properties or forces as needed
+    
+    return graph;
 }
 
 setup();

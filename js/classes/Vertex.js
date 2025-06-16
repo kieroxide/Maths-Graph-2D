@@ -3,13 +3,13 @@ class Vertex {
         this.id = nextID;
         this.degrees = 0;
         // Randomize initial position
-        this.x = 300 + Math.random() * 100 - 50;
-        this.y = 300 + Math.random() * 100 - 50;
+        this.x = canvas.width * Math.random();
+        this.y = canvas.height * Math.random();
         this.position = new Point2D(this.x , this.y)
         this.neighboursID = new Set();
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed = 2;
+        this.maxSpeed = 20;
 
         //force
         this.fx = 0;
@@ -37,12 +37,12 @@ class Vertex {
             this.vx *= scale;
             this.vy *= scale;
         }
+        let minSpeed = this.maxSpeed * 0.1;
+        if(Math.abs(this.vx) > minSpeed)  this.x += this.vx;
+        if(Math.abs(this.vy) > minSpeed)  this.y += this.vy;
 
-        if(Math.abs(this.vx) > 0)  this.x += this.vx;
-        if(Math.abs(this.vy) > 0)  this.y += this.vy;
-
-        this.vx *= 0.95;
-        this.vy *= 0.95;
+        this.vx *= 0.99;
+        this.vy *= 0.99;
 
         this.position.x = this.x;
         this.position.y = this.y;
@@ -63,5 +63,17 @@ class Vertex {
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";         
         ctx.fillText(`${this.id}`, this.x, this.y);
+    }
+    outofBounds(){
+        let screenX = this.x * scale + panOffset.x;
+        let screenY = this.y * scale + panOffset.y;
+
+        if(screenX < 0 || screenX > canvas.width || screenY < 0 || screenY > canvas.height) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 }

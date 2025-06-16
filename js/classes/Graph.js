@@ -1,7 +1,7 @@
 class Graph{
     constructor(){
         this.nextID = 0;
-        this.vertexRadius = 1;
+        this.vertexRadius = 20;
         this.vertices = [];
         this.edges = [];
         this.groups = [];
@@ -244,7 +244,7 @@ class Graph{
     draw(){
         this.applyVertexPhysics();
         this.applyEdgePhysics();
-        this.applyBoundaryPhysics();
+        //this.applyBoundaryPhysics();
         this.checkRotations();
         this.groupingPhysics();
         this.groupRepulsion();
