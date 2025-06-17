@@ -1,0 +1,181 @@
+class Handler {
+    static addEdgeFromInputs() {
+        const id1 = parseInt(document.getElementById('id1').value);
+        const id2 = parseInt(document.getElementById('id2').value);
+        if (!isNaN(id1) && !isNaN(id2)) {
+            graph.addEdge(id1, id2);
+            graph.groups = Math2D.hubConnections(graph);
+        }
+    }
+
+    static eventHandlers() {
+        let canvas = scene.canvas;
+
+        // Canvas mouse events for panning
+        canvas.addEventListener('mousedown', function(e) {
+            scene.isPanning = true;
+            scene.panStart.x = e.clientX - scene.panOffset.x;
+            scene.panStart.y = e.clientY - scene.panOffset.y;
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (scene.isPanning) {
+                scene.panOffset.x = e.clientX - scene.panStart.x;
+                scene.panOffset.y = e.clientY - scene.panStart.y;
+            }
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            scene.isPanning = false;
+        });
+
+        canvas.addEventListener('mouseleave', function(e) {
+            scene.isPanning = false;
+        });
+
+        // Mouse wheel for zooming
+        canvas.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const zoomIntensity = 0.1;
+            let mouseX = e.offsetX;
+            let mouseY = e.offsetY;
+            let wheel = e.deltaY < 0 ? 1 : -1;
+            let zoom = Math.exp(wheel * zoomIntensity);
+
+            // Adjust panOffset so zoom is centered on mouse
+            scene.panOffset.x = mouseX - (mouseX - scene.panOffset.x) * zoom;
+            scene.panOffset.y = mouseY - (mouseY - scene.panOffset.y) * zoom;
+
+            scene.scale *= zoom;
+            scene.scale = Math.max(scene.scaleMin, Math.min(scene.scaleMax, scene.scale));
+        });
+
+    }
+
+    static initialiseSliders(){
+        let graph = scene.graph;
+        // Vertex Push
+        const vertexPushSlider = document.getElementById('vertexPushSlider');
+        const vertexPushValue = document.getElementById('vertexPushValue');
+        vertexPushSlider.value = 100;
+        vertexPushSlider.min = 10;
+        vertexPushSlider.max = 500;
+        vertexPushSlider.step = 1;
+        vertexPushValue.textContent = vertexPushSlider.value;
+        vertexPushSlider.oninput = function() {
+            graph.vertexPushConstant = parseFloat(this.value);
+            vertexPushValue.textContent = this.value;
+        };
+
+        // Edge Pull
+        const edgePullSlider = document.getElementById('edgePullSlider');
+        const edgePullValue = document.getElementById('edgePullValue');
+        edgePullSlider.value = 0.05;
+        edgePullSlider.min = 0.01;
+        edgePullSlider.max = 0.5;
+        edgePullSlider.step = 0.01;
+        edgePullValue.textContent = edgePullSlider.value;
+        edgePullSlider.oninput = function() {
+            graph.edgePullConstant = parseFloat(this.value);
+            edgePullValue.textContent = this.value;
+        };
+
+        // Stall Rotation
+        const stallRotationSlider = document.getElementById('stallRotationSlider');
+        const stallRotationValue = document.getElementById('stallRotationValue');
+        stallRotationSlider.value = 0.5;
+        stallRotationSlider.min = 0;
+        stallRotationSlider.max = 0.5;
+        stallRotationSlider.step = 0.01;
+        stallRotationValue.textContent = stallRotationSlider.value;
+        stallRotationSlider.oninput = function() {
+            graph.stallRotationConstant = parseFloat(this.value);
+            stallRotationValue.textContent = this.value;
+        };
+
+        // Group Pull
+        const groupPullSlider = document.getElementById('groupPullSlider');
+        const groupPullValue = document.getElementById('groupPullValue');
+        groupPullSlider.value = 0.01;
+        groupPullSlider.min = 0.001;
+        groupPullSlider.max = 0.05;
+        groupPullSlider.step = 0.001;
+        groupPullValue.textContent = groupPullSlider.value;
+        groupPullSlider.oninput = function() {
+            graph.groupPullConstant = parseFloat(this.value);
+            groupPullValue.textContent = this.value;
+        };
+
+        // Groups Push
+        const groupsPushSlider = document.getElementById('groupsPushSlider');
+        const groupsPushValue = document.getElementById('groupsPushValue');
+        groupsPushSlider.value = 30;
+        groupsPushSlider.min = 1;
+        groupsPushSlider.max = 100;
+        groupsPushSlider.step = 1;
+        groupsPushValue.textContent = groupsPushSlider.value;
+        groupsPushSlider.oninput = function() {
+            graph.groupsPushConstant = parseFloat(this.value);
+            groupsPushValue.textContent = this.value;
+        };
+
+        // Group Spacing
+        const groupSpacingSlider = document.getElementById('groupSpacingSlider');
+        const groupSpacingValue = document.getElementById('groupSpacingValue');
+        groupSpacingSlider.value = 0.2;
+        groupSpacingSlider.min = 0.01;
+        groupSpacingSlider.max = 1;
+        groupSpacingSlider.step = 0.01;
+        groupSpacingValue.textContent = groupSpacingSlider.value;
+        groupSpacingSlider.oninput = function() {
+            graph.groupSpacingConstant = parseFloat(this.value);
+            groupSpacingValue.textContent = this.value;
+        };
+
+        // Edges Push
+        const edgesPushSlider = document.getElementById('edgesPushSlider');
+        const edgesPushValue = document.getElementById('edgesPushValue');
+        edgesPushSlider.value = 0.1;
+        edgesPushSlider.min = 0.01;
+        edgesPushSlider.max = 1;
+        edgesPushSlider.step = 0.01;
+        edgesPushValue.textContent = edgesPushSlider.value;
+        edgesPushSlider.oninput = function() {
+            graph.edgesPushConstant = parseFloat(this.value);
+            edgesPushValue.textContent = this.value;
+        };
+
+        // Edge-Vertex Push
+        const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
+        const edgeVertPushValue = document.getElementById('edgeVertPushValue');
+        edgeVertPushSlider.value = 0.1;
+        edgeVertPushSlider.min = 0.01;
+        edgeVertPushSlider.max = 1;
+        edgeVertPushSlider.step = 0.01;
+        edgeVertPushValue.textContent = edgeVertPushSlider.value;
+        edgeVertPushSlider.oninput = function() {
+            graph.edgeVertPushConstant = parseFloat(this.value);
+            edgeVertPushValue.textContent = this.value;
+        };
+
+        // Set graph constants to default values
+        graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
+        graph.edgePullConstant = parseFloat(edgePullSlider.value);
+        graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
+        graph.groupPullConstant = parseFloat(groupPullSlider.value);
+        graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
+        graph.groupSpacingConstant = parseFloat(groupSpacingSlider.value);
+        graph.edgesPushConstant = parseFloat(edgesPushSlider.value);
+        graph.edgeVertPushConstant = parseFloat(edgeVertPushSlider.value);
+
+        // Update displayed values
+        vertexPushValue.textContent = vertexPushSlider.value;
+        edgePullValue.textContent = edgePullSlider.value;
+        stallRotationValue.textContent = stallRotationSlider.value;
+        groupPullValue.textContent = groupPullSlider.value;
+        groupsPushValue.textContent = groupsPushSlider.value;
+        groupSpacingValue.textContent = groupSpacingSlider.value;
+        edgesPushValue.textContent = edgesPushSlider.value;
+        edgeVertPushValue.textContent = edgeVertPushSlider.value;
+    }
+}

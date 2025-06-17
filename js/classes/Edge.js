@@ -15,6 +15,7 @@ class Edge{
      * Draws the edge on the canvas.
      */
     draw(){
+        let ctx = scene.ctx;
         const vertexToX = this.vertexTo.x;
         const vertexToY = this.vertexTo.y;
 

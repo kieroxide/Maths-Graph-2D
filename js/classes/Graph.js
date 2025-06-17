@@ -35,7 +35,7 @@ class Graph{
                 let distance = Math2D.distanceBetween(vertex.position, midA);
                 if(distance === 0 ) distance = 0.001
                 const direction = Math2D.vectorFrom(vertex.position, midA);
-                const d = distance - sweetSpot;
+                const d = distance;
                 const forceMagnitude = forceConstant/(d + 5) ** 2;
                 
                 const fx = forceMagnitude * direction.x;
@@ -101,7 +101,7 @@ class Graph{
                 const direction = Math2D.vectorFrom(hub, vertex);
                 const perpendicular = new Point2D(direction.y, -direction.x);
                 const distance = Math2D.distanceBetween(hub.position, vertex.position);
-                const d = distance - sweetSpot;
+                const d = distance;
                 const forceMagnitude = forceConstant/(d * d + 10);
                 vertex.fx += perpendicular.x * forceMagnitude;
                 vertex.fy += perpendicular.y * forceMagnitude;
@@ -127,7 +127,7 @@ class Graph{
                 const vectorAB = Math2D.vectorFrom(groupA.midpoint, groupB.midpoint);
                 let distance = Math2D.distanceBetween(groupA.midpoint, groupB.midpoint)
                 if(distance < 20) distance = 0.01;
-                const d = distance - sweetSpot;
+                const d = distance;
                 const forceMagnitude = forceConstant/(d*d + 10);
                 for(const vertexA of groupA.group){
                     for(const vertexB of groupB.group){
@@ -157,7 +157,7 @@ class Graph{
                     // Get vector from A to B
                     const vectorAB = Math2D.vectorFrom(pointA, pointB);
                     // Calculate force magnitude proportional to how far beyond sweet spot
-                    let forceMagnitude = 0.0001 * forceConstant * (distanceBetween - sweetSpot);
+                    let forceMagnitude = 0.0001 * forceConstant * (distanceBetween);
                     //applies the force to the vertices
                     Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
                     }
@@ -218,7 +218,7 @@ class Graph{
                 if(distance === 0) distance = 0.1; // division by zero avoidance
                 //if distance too close 
                 //calculates repulsion force vector
-                const d = distance - sweetSpot;
+                const d = distance;
                 const forceMagnitude = forceConstant / (d * d + 10);
                 const vectorAB = Math2D.vectorFrom(pointA, pointB);
                 Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
@@ -239,9 +239,8 @@ class Graph{
             // Get vector from A to B
             const vectorAB = Math2D.vectorFrom(pointA, pointB);
             if(distanceBetween === 0) distanceBetween = 0.1; // Avoid division by zero
-            if(distanceBetween < sweetSpot) continue;
             // Calculate force magnitude proportional to how far beyond sweet spot
-            const d = distanceBetween - sweetSpot;
+            const d = distanceBetween;
             let forceMagnitude = 0.01 * forceConstant * d;
             Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
 
@@ -284,8 +283,11 @@ class Graph{
      * Assigns neighbours to vertices based on edges.
      */
     assignNeighbours(){
-        const vertices = this.vertices;
+        const vertices = this.vertices
         const edges = this.edges;
+        for(const vertex of vertices){
+            vertex.neighboursID.clear();
+        }
         for(const edge of edges){
             //adds to neighbour set
             edge.vertexTo.neighboursID.add(edge.vertexFrom.id);

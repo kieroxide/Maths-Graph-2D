@@ -13,8 +13,8 @@ class Vertex {
         this.degrees = 0;
 
         // Randomize initial position
-        this.x = canvas.width * Math.random();
-        this.y = canvas.height * Math.random();
+        this.x = canvasWidth * Math.random();
+        this.y = canvasHeight * Math.random();
 
         this.position = new Point2D(this.x , this.y)
 
@@ -40,7 +40,7 @@ class Vertex {
      * Calculates next draw position using velocity and force calculations.
      */
     updatePosition(){
-        let maxSpeed = this.maxSpeed * temperature;
+        let maxSpeed = this.maxSpeed * scene.temperature;
         this.ax = this.fx / this.mass;
         this.ay = this.fy / this.mass;
 
@@ -72,6 +72,7 @@ class Vertex {
      * Draws the vertex on the canvas.
      */
     draw(){
+        let ctx = scene.ctx;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); 
         ctx.fillStyle = '#2ecc71';
@@ -90,10 +91,12 @@ class Vertex {
      * @returns {boolean}
      */
     outofBounds(){
+        let scale = scene.scale;
+        let panOffset = scene.panOffset;
         let screenX = this.x * scale + panOffset.x;
         let screenY = this.y * scale + panOffset.y;
 
-        if(screenX < 0 || screenX > canvas.width || screenY < 0 || screenY > canvas.height) {
+        if(screenX < 0 || screenX > canvasWidth || screenY < 0 || screenY > canvasHeight) {
             return true;
         }
         else {
@@ -102,3 +105,4 @@ class Vertex {
 
     }
 }
+
