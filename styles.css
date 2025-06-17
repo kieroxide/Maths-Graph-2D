@@ -73,3 +73,34 @@ canvas#graphCanvas {
 .controls button:hover {
     background: #27ae60;
 }
+
+/* Style for new graph controls */
+.new-graph-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.new-graph-controls input[type="number"] {
+    width: 90px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    font-size: 1rem;
+}
+
+.new-graph-controls button {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 7px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.new-graph-controls button:hover {
+    background: #217dbb;
+}

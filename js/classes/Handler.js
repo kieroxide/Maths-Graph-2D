@@ -10,7 +10,7 @@ class Handler {
 
     static eventHandlers() {
         let canvas = scene.canvas;
-
+        
         // Canvas mouse events for panning
         canvas.addEventListener('mousedown', function(e) {
             scene.isPanning = true;
@@ -190,5 +190,51 @@ class Handler {
         edgesPushValue.textContent = edgesPushSlider.value;
         edgeVertPushValue.textContent = edgeVertPushSlider.value;
         hubPullValue.textContent = hubPullSlider.value;
+    }
+    static updateSliders(){
+        let graph = scene.graph;
+
+        // Helper to assign from slider
+        function assignSlider(sliderId, valueId, graphProp, parse = parseFloat) {
+            const slider = document.getElementById(sliderId);
+            const valueSpan = document.getElementById(valueId);
+            graph[graphProp] = parse(slider.value);
+            valueSpan.textContent = slider.value;
+            slider.oninput = function() {
+                graph[graphProp] = parse(this.value);
+                valueSpan.textContent = this.value;
+            };
+        }
+
+        assignSlider('vertexPushSlider', 'vertexPushValue', 'vertexPushConstant');
+        assignSlider('edgePullSlider', 'edgePullValue', 'edgePullConstant');
+        assignSlider('stallRotationSlider', 'stallRotationValue', 'stallRotationConstant');
+        assignSlider('groupPullSlider', 'groupPullValue', 'groupPullConstant');
+        assignSlider('groupsPushSlider', 'groupsPushValue', 'groupsPushConstant');
+        assignSlider('groupSpacingSlider', 'groupSpacingValue', 'groupSpacingConstant');
+        assignSlider('edgesPushSlider', 'edgesPushValue', 'edgesPushConstant');
+        assignSlider('edgeVertPushSlider', 'edgeVertPushValue', 'edgeVertPushConstant');
+        assignSlider('hubPullSlider', 'hubPullValue', 'hubPullConstant');
+    }
+    static setupNewGraphButton() {
+        const btn = document.getElementById('newGraphBtn');
+        btn.onclick = function() {
+            const nodes = parseInt(document.getElementById('newNodes').value);
+            const extraEdges = parseInt(document.getElementById('newExtraEdges').value);
+
+            if (isNaN(nodes) || nodes < 1) {
+                alert("Please enter a valid number of nodes (at least 1).");
+                return;
+            }
+            if (isNaN(extraEdges) || extraEdges < 0) {
+                alert("Please enter a valid number of extra edges (0 or more).");
+                return;
+            }
+
+            scene.nodes = nodes;
+            scene.temperature = 1;
+            scene.graph = GraphMaker.generateRandomConnectedGraph(nodes, extraEdges);
+            Handler.updateSliders();
+        };
     }
 }

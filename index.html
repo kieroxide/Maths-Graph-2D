@@ -10,6 +10,12 @@
     <div class="layout">
         <canvas id="graphCanvas" width="1200" height="700"></canvas>
         <div class="controls">
+            <div class="new-graph-controls">
+                <input id="newNodes" type="number" min="1" placeholder="Number of nodes">
+                <input id="newExtraEdges" type="number" min="0" placeholder="Extra edges">
+                <button id="newGraphBtn">New Graph</button>
+            </div>
+
             <input id="id1" type="number" placeholder="From ID">
             <input id="id2" type="number" placeholder="To ID">
             <button onclick="addEdgeFromInputs()">Add Edge</button>

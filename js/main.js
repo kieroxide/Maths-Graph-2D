@@ -11,8 +11,7 @@ let canvasHeight = 0;
 
 function setup(){
     scene.setup();
-    scene.graph = GraphMaker.generateTreeGraph(scene.nodes);
-    scene.graph = GraphMaker.generateRandomConnectedGraph(scene.nodes, 0);
+    Handler.setupNewGraphButton();
     Handler.initialiseSliders();
     Handler.eventHandlers();
 }
