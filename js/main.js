@@ -219,19 +219,6 @@ function initialiseSliders(){
         edgePullValue.textContent = this.value;
     };
 
-    // Boundary Push
-    const boundaryPushSlider = document.getElementById('boundaryPushSlider');
-    const boundaryPushValue = document.getElementById('boundaryPushValue');
-    boundaryPushSlider.value = 10;
-    boundaryPushSlider.min = 1;
-    boundaryPushSlider.max = 100;
-    boundaryPushSlider.step = 1;
-    boundaryPushValue.textContent = boundaryPushSlider.value;
-    boundaryPushSlider.oninput = function() {
-        graph.boundaryPushConstant = parseFloat(this.value);
-        boundaryPushValue.textContent = this.value;
-    };
-
     // Stall Rotation
     const stallRotationSlider = document.getElementById('stallRotationSlider');
     const stallRotationValue = document.getElementById('stallRotationValue');
@@ -313,7 +300,6 @@ function initialiseSliders(){
     // Set graph constants to default values
     graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
     graph.edgePullConstant = parseFloat(edgePullSlider.value);
-    graph.boundaryPushConstant = parseFloat(boundaryPushSlider.value);
     graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
     graph.groupPullConstant = parseFloat(groupPullSlider.value);
     graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
@@ -324,7 +310,6 @@ function initialiseSliders(){
     // Update displayed values
     vertexPushValue.textContent = vertexPushSlider.value;
     edgePullValue.textContent = edgePullSlider.value;
-    boundaryPushValue.textContent = boundaryPushSlider.value;
     stallRotationValue.textContent = stallRotationSlider.value;
     groupPullValue.textContent = groupPullSlider.value;
     groupsPushValue.textContent = groupsPushSlider.value;

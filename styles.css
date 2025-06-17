@@ -5,18 +5,39 @@ body {
     padding: 0;
 }
 
+.layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+    margin: 30px 0 0 0;
+}
+
+canvas#graphCanvas {
+    display: block;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(44, 204, 113, 0.08);
+    border: 1px solid #e0e0e0;
+    max-width: 98vw;
+    max-height: 80vh;
+}
+
 .controls {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     padding: 20px 30px 10px 30px;
-    margin: 20px auto 10px auto;
-    max-width: 700px;
+    max-width: 340px;
+    min-width: 260px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 18px 30px;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+    /* Make controls scrollable if content overflows */
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .controls label {
@@ -51,15 +72,4 @@ body {
 }
 .controls button:hover {
     background: #27ae60;
-}
-
-canvas#graphCanvas {
-    display: block;
-    margin: 0 auto 30px auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(44, 204, 113, 0.08);
-    border: 1px solid #e0e0e0;
-    max-width: 98vw;
-    max-height: 80vh;
 }
