@@ -4,40 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>2D Graph Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <input id="id1" type="number" placeholder="From ID">
-    <input id="id2" type="number" placeholder="To ID">
-    <button onclick="addEdgeFromInputs()">Add Edge</button>
+    <div class="controls">
+        <input id="id1" type="number" placeholder="From ID">
+        <input id="id2" type="number" placeholder="To ID">
+        <button onclick="addEdgeFromInputs()">Add Edge</button>
 
-    <label for="vertexPushSlider">Vertex Push: <span id="vertexPushValue">100</span></label>
-    <input type="range" id="vertexPushSlider" min="10" max="500" value="10" step="1"><br>
+        <label for="vertexPushSlider">Vertex Push: <span id="vertexPushValue">100</span></label>
+        <input type="range" id="vertexPushSlider" min="10" max="500" value="10" step="1">
 
-    <label for="edgePullSlider">Edge Pull: <span id="edgePullValue">0.05</span></label>
-    <input type="range" id="edgePullSlider" min="0.01" max="0.5" value="0.05" step="0.01"><br>
+        <label for="edgePullSlider">Edge Pull: <span id="edgePullValue">0.05</span></label>
+        <input type="range" id="edgePullSlider" min="0.01" max="0.5" value="0.05" step="0.01">
 
-    <label for="boundaryPushSlider">Boundary Push: <span id="boundaryPushValue">10</span></label>
-    <input type="range" id="boundaryPushSlider" min="1" max="100" value="10" step="1"><br>
+        <label for="boundaryPushSlider">Boundary Push: <span id="boundaryPushValue">10</span></label>
+        <input type="range" id="boundaryPushSlider" min="1" max="100" value="10" step="1">
 
-    <label for="stallRotationSlider">Stall Rotation: <span id="stallRotationValue">0.05</span></label>
-    <input type="range" id="stallRotationSlider" min="0" max="0.5" value="0.05" step="0.01"><br>
+        <label for="stallRotationSlider">Stall Rotation: <span id="stallRotationValue">0.05</span></label>
+        <input type="range" id="stallRotationSlider" min="0" max="0.5" value="0.05" step="0.01">
 
-    <label for="groupPullSlider">Group Pull: <span id="groupPullValue">0.05</span></label>
-    <input type="range" id="groupPullSlider" min="0.01" max="0.5" value="0.05" step="0.01"><br>
+        <label for="groupPullSlider">Group Pull: <span id="groupPullValue">0.05</span></label>
+        <input type="range" id="groupPullSlider" min="0.01" max="0.5" value="0.05" step="0.01">
 
-    <label for="groupsPushSlider">Groups Push: <span id="groupsPushValue">10</span></label>
-    <input type="range" id="groupsPushSlider" min="1" max="100" value="100" step="1"><br>
+        <label for="groupsPushSlider">Groups Push: <span id="groupsPushValue">10</span></label>
+        <input type="range" id="groupsPushSlider" min="1" max="100" value="100" step="1">
 
-    <label for="groupSpacingSlider">Group Spacing: <span id="groupSpacingValue">0.1</span></label>
-    <input type="range" id="groupSpacingSlider" min="0.01" max="1" value="0.1" step="0.01"><br>
+        <label for="groupSpacingSlider">Group Spacing: <span id="groupSpacingValue">0.1</span></label>
+        <input type="range" id="groupSpacingSlider" min="0.01" max="1" value="0.1" step="0.01">
 
-    <label for="edgesPushSlider">Edges Push: <span id="edgesPushValue">0.1</span></label>
-    <input type="range" id="edgesPushSlider" min="0.01" max="1" value="0.1" step="0.01"><br>
+        <label for="edgesPushSlider">Edges Push: <span id="edgesPushValue">0.1</span></label>
+        <input type="range" id="edgesPushSlider" min="0.01" max="1" value="0.1" step="0.01">
 
-    <label for="edgeVertPushSlider">Edge-Vertex Push: <span id="edgeVertPushValue">0.1</span></label>
-    <input type="range" id="edgeVertPushSlider" min="0.01" max="1" value="0.1" step="0.01"><br>
+        <label for="edgeVertPushSlider">Edge-Vertex Push: <span id="edgeVertPushValue">0.1</span></label>
+        <input type="range" id="edgeVertPushSlider" min="0.01" max="1" value="0.1" step="0.01">
+    </div>
 
-    <canvas id="graphCanvas" width="5000" height="2000" ></canvas>
+    <canvas id="graphCanvas" width="1200" height="700"></canvas>
     <script src="js/classes/Math2D.js"></script>
     <script src="js/classes/Point2D.js"></script>
     <script src="js/classes/Vertex.js"></script>

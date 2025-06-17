@@ -1,14 +1,19 @@
+/**
+ * Represents a 2D graph with vertices and edges.
+ */
 class Graph{
-    constructor(){
+    /**
+     * @param {number} nodes Number of nodes to initialize.
+     */
+    constructor(nodes){
         this.nextID = 0;
         this.vertexRadius = 20;
         this.vertices = [];
         this.edges = [];
         this.groups = [];
-
+        this.maxSpeed = 6 * Math.pow(nodes, 0.3);
         this.vertexPushConstant = 0;
         this.edgePullConstant = 0;
-        this.boundaryPushConstant = 0;
         this.stallRotationConstant = 0;
         this.groupPullConstant = 0;
         this.groupsPushConstant = 0;
@@ -16,6 +21,9 @@ class Graph{
         this.edgesPushConstant = 0;
         this.edgeVertPushConstant = 0;
     }
+    /**
+     * Applies repulsion between edge midpoints and vertices.
+     */
     applyEdgeVerticesRepulsion(){
         const forceConstant = this.edgeVertPushConstant;
         const edges = this.edges;
@@ -28,7 +36,7 @@ class Graph{
                 if(distance === 0 ) distance = 0.001
                 const direction = Math2D.vectorFrom(vertex.position, midA);
                 const d = distance - sweetSpot;
-                const forceMagnitude = 0.0000001 * forceConstant/(d + 5) ** 2;
+                const forceMagnitude = forceConstant/(d + 5) ** 2;
                 
                 const fx = forceMagnitude * direction.x;
                 const fy = forceMagnitude * direction.y;
@@ -38,6 +46,9 @@ class Graph{
             }
         }
     }
+    /**
+     * Applies repulsion between edges.
+     */
     applyEdgeRepulsion() {
         const forceConstant = this.edgesPushConstant;
         for (let i = 0; i < this.edges.length; i++) {
@@ -60,7 +71,7 @@ class Graph{
                 let distance = Math2D.distanceBetween(midA, midB);
                 if (distance === 0) distance = 0.01;
             
-                const force = forceConstant / (distance * distance);
+                const force = forceConstant / distance;
                 const fx = vectorAB.x * force;
                 const fy = vectorAB.y * force;
             
@@ -76,6 +87,9 @@ class Graph{
             }
         }
     }
+    /**
+     * Applies spacing in groups.
+     */
     groupSpacing(){
         const groups = this.groups;
         const forceConstant = this.groupSpacingConstant;
@@ -95,6 +109,9 @@ class Graph{
 
         }
     }
+    /**
+     * Applies repulsion between groups.
+     */
     groupRepulsion(){
         const groups = this.groups;
         const forceConstant = this.groupsPushConstant;
@@ -120,6 +137,9 @@ class Graph{
             }
         }
     }
+    /**
+     * Handles group-pull physics.
+     */
     groupingPhysics(){
         const forceConstant = this.groupPullConstant;
         const groups = this.groups;
@@ -143,8 +163,10 @@ class Graph{
                     }
                 }
             }
-        }
-
+    }
+    /**
+     * Checks and applies rotational adjustments.
+     */
     checkRotations(){
         const forceThreshold = 3; 
         const velocityThreshold = 2;
@@ -166,6 +188,9 @@ class Graph{
         }
 
     }
+    /**
+     * Updates vertex positions.
+     */
     updateVertexPosition(){
         for(const vertex of this.vertices){
             vertex.updatePosition();
@@ -173,6 +198,9 @@ class Graph{
             vertex.fy = 0;
         }
     }
+    /**
+     * Applies physics to vertices.
+     */
     applyVertexPhysics(){
         const vertices = this.vertices;
         const n = vertices.length;
@@ -197,6 +225,9 @@ class Graph{
             }
         }
     }
+    /**
+     * Applies physics to edges.
+     */
     applyEdgePhysics(){
         const forceConstant = this.edgePullConstant;
         for(const edge of this.edges){
@@ -217,23 +248,9 @@ class Graph{
 
         }
     }
-    applyBoundaryPhysics(){
-        const bound = 30;
-        for(const vertex of this.vertices){
-            if(vertex.x < bound + vertex.radius){
-                vertex.fx += this.boundaryPushConstant;
-            }
-            if(vertex.y < bound + vertex.radius){
-                vertex.fy += this.boundaryPushConstant;
-            }
-            if(vertex.x + vertex.radius > canvas.width - bound){
-                vertex.fx -= this.boundaryPushConstant;
-            }
-            if(vertex.y + vertex.radius > canvas.height - bound){
-                vertex.fy -= this.boundaryPushConstant;
-            }
-        }
-    }
+    /**
+     * Computes the average force in the system.
+     */
     averageForce(){
         let averageForce = 0;
         for(const vertex of this.vertices){
@@ -241,6 +258,9 @@ class Graph{
         }
         console.log("Average Force: " + averageForce / this.vertices.length);
     }
+    /**
+     * Draws the graph on the canvas.
+     */
     draw(){
         this.applyVertexPhysics();
         this.applyEdgePhysics();
@@ -250,7 +270,7 @@ class Graph{
         this.groupRepulsion();
         this.groupSpacing();
         this.applyEdgeRepulsion();
-        //this.applyEdgeVerticesRepulsion();
+        this.applyEdgeVerticesRepulsion();
         //this.averageForce();
         this.updateVertexPosition();
         for(const edge of this.edges){
@@ -260,6 +280,9 @@ class Graph{
             vertex.draw();
         }
     }   
+    /**
+     * Assigns neighbours to vertices based on edges.
+     */
     assignNeighbours(){
         const vertices = this.vertices;
         const edges = this.edges;
@@ -269,6 +292,11 @@ class Graph{
             edge.vertexFrom.neighboursID.add(edge.vertexTo.id);
         }
     }
+    /**
+     * Adds an edge between two vertices.
+     * @param {number} idTo - ID of the target vertex.
+     * @param {number} idFrom - ID of the source vertex.
+     */
     addEdge(idTo , idFrom){
         if(this.vertices.length < 1){
             console.log("0 vertices to create edge for");
@@ -277,15 +305,31 @@ class Graph{
         console.log(edge);
         this.edges.push(edge); 
     }
+    /**
+     * Adds a vertex to the graph.
+     */
     addVertex(){
-        const vertex = new Vertex(this.getNextID(), this.vertexRadius);
+        const vertex = new Vertex(this.getNextID(), this.maxSpeed, this.vertexRadius);
         this.vertices.push(vertex);
     }
+
+    /**
+     * Gets the next available ID.
+     * @returns {number} The next ID.
+     */
     getNextID(){
         let currentID = this.nextID;
         this.nextID++;
         return currentID;
     }
+
+
+    /**
+     * Checks if an edge exists between two vertices.
+     * @param {Vertex} vertexTo - The target vertex.
+     * @param {Vertex} vertexFrom - The source vertex.
+     * @returns {boolean} True if the edge exists, false otherwise.
+     */
     edgeExists(vertexTo, vertexFrom){
         for(const edge of this.edges){
             if((edge.vertexTo.id === vertexTo.id && edge.vertexFrom.id === vertexFrom.id) ||

@@ -1,8 +1,16 @@
+/* Force-Directed Graph Visualizer
+ * Vanilla Javascript
+ * Author: Kieran B
+ */
+
+
 "use strict";
 let temperature = 1; // Global temperature variable
+let frameCount = 0;
 let canvas;
 let ctx;
-let graph = new Graph();
+let nodes = 1000;
+let graph = new Graph(nodes);
 let sweetSpot = graph.vertexRadius * 1;
 
 let isPanning = false;
@@ -12,11 +20,6 @@ let panOffset = { x: 0, y: 0 };
 let scale = 1;
 const scaleMin = 0.2;
 const scaleMax = 5;
-
-//graph.addVertex();
-//graph.addVertex();
-//edges and vertices for testing
-
 
 const edges = [
     { from: 0, to: 1 },
@@ -32,168 +35,26 @@ const edges = [
   { from: 6, to: 11 }
 ];
 
-//getVerticesAndEdges()
-//graph.assignNeighbours();
-//Math2D.degreeCount(graph);
-//graph.groups = Math2D.hubConnections(graph);
-
 function setup(){
     canvas = document.getElementById('graphCanvas');
     ctx = canvas.getContext('2d');
-    graph = generateTreeGraph(1500); // Generate a tree graph with n vertices
-    //graph = generateRandomConnectedGraph(graph, 1500, 100); // Generate a random connected graph with n vertices and extra edges
-    setInterval(() => {
-        temperature -= 0.0009; // Decrease temperature over time
-        if (temperature < 0.001) {
-            temperature = 0.001; // Prevent negative temperature
-        }
-        console.log(`Temperature: ${temperature}`);
-    }, 1); // 1000 milliseconds = 1 second
-        
-        canvas.addEventListener('mousedown', (e) => {
-            isPanning = true;
-            const rect = canvas.getBoundingClientRect();
-            panStart.x = e.clientX - rect.left - panOffset.x;
-            panStart.y = e.clientY - rect.top - panOffset.y;
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (!isPanning) return;
-            const rect = canvas.getBoundingClientRect();
-            panOffset.x = e.clientX - rect.left - panStart.x;
-            panOffset.y = e.clientY - rect.top - panStart.y;
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            isPanning = false;
-        });
-        canvas.addEventListener('mouseleave', () => {
-            isPanning = false;
-        });
-
-        canvas.addEventListener('wheel', (e) => {
-      e.preventDefault(); // prevent page scroll
-
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const wheel = e.deltaY < 0 ? 1.1 : 0.9;
-
-      // Compute new scale, clamped
-      const newScale = Math.min(scaleMax, Math.max(scaleMin, scale * wheel));
-
-      // To zoom on mouse position, adjust panOffset to keep mouse in place
-      panOffset.x -= (mouseX - panOffset.x) * (newScale / scale - 1);
-      panOffset.y -= (mouseY - panOffset.y) * (newScale / scale - 1);
-
-      scale = newScale;
-    });
-    // Vertex Push
-    const vertexPushSlider = document.getElementById('vertexPushSlider');
-    const vertexPushValue = document.getElementById('vertexPushValue');
-    vertexPushSlider.value = 500; // Set default
-    vertexPushSlider.oninput = function() {
-        graph.vertexPushConstant = parseFloat(this.value);
-        vertexPushValue.textContent = this.value;
-    };
-
-    // Edge Pull
-    const edgePullSlider = document.getElementById('edgePullSlider');
-    const edgePullValue = document.getElementById('edgePullValue');
-    edgePullSlider.value = 0.05; // Set default
-    edgePullSlider.oninput = function() {
-        graph.edgePullConstant = parseFloat(this.value);
-        edgePullValue.textContent = this.value;
-    };
-
-    // Boundary Push
-    const boundaryPushSlider = document.getElementById('boundaryPushSlider');
-    const boundaryPushValue = document.getElementById('boundaryPushValue');
-    boundaryPushSlider.value = 10; // Set default
-    boundaryPushSlider.oninput = function() {
-        graph.boundaryPushConstant = parseFloat(this.value);
-        boundaryPushValue.textContent = this.value;
-    };
-
-    // Stall Rotation
-    const stallRotationSlider = document.getElementById('stallRotationSlider');
-    const stallRotationValue = document.getElementById('stallRotationValue');
-    stallRotationSlider.value = 0.1; // Set default
-    stallRotationSlider.oninput = function() {
-        graph.stallRotationConstant = parseFloat(this.value);
-        stallRotationValue.textContent = this.value;
-    };
-
-    // Group Pull
-    const groupPullSlider = document.getElementById('groupPullSlider');
-    const groupPullValue = document.getElementById('groupPullValue');
-    groupPullSlider.value = 0.05; // Set default
-    groupPullSlider.oninput = function() {
-        graph.groupPullConstant = parseFloat(this.value);
-        groupPullValue.textContent = this.value;
-    };
-
-    // Groups Push
-    const groupsPushSlider = document.getElementById('groupsPushSlider');
-    const groupsPushValue = document.getElementById('groupsPushValue');
-    groupsPushSlider.value = 25; // Set default
-    groupsPushSlider.oninput = function() {
-        graph.groupsPushConstant = parseFloat(this.value);
-        groupsPushValue.textContent = this.value;
-    };
-
-    // Group Spacing
-    const groupSpacingSlider = document.getElementById('groupSpacingSlider');
-    const groupSpacingValue = document.getElementById('groupSpacingValue');
-    groupSpacingSlider.value = 5; // Set default
-    groupSpacingSlider.oninput = function() {
-        graph.groupSpacingConstant = parseFloat(this.value);
-        groupSpacingValue.textContent = this.value;
-    };
-
-    // Edges Push
-    const edgesPushSlider = document.getElementById('edgesPushSlider');
-    const edgesPushValue = document.getElementById('edgesPushValue');
-    edgesPushSlider.value = 100; // Set default
-    edgesPushSlider.oninput = function() {
-        graph.edgesPushConstant = parseFloat(this.value);
-        edgesPushValue.textContent = this.value;
-    };
-
-    // Edge-Vertex Push
-    const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
-    const edgeVertPushValue = document.getElementById('edgeVertPushValue');
-    edgeVertPushSlider.value = 100; // Set default
-    edgeVertPushSlider.oninput = function() {
-        graph.edgeVertPushConstant = parseFloat(this.value);
-        edgeVertPushValue.textContent = this.value;
-    };
-
-    // Set graph constants to default values
-    graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
-    graph.edgePullConstant = parseFloat(edgePullSlider.value);
-    graph.boundaryPushConstant = parseFloat(boundaryPushSlider.value);
-    graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
-    graph.groupPullConstant = parseFloat(groupPullSlider.value);
-    graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
-    graph.groupSpacingConstant = parseFloat(groupSpacingSlider.value);
-    graph.edgesPushConstant = parseFloat(edgesPushSlider.value);
-    graph.edgeVertPushConstant = parseFloat(edgeVertPushSlider.value);
-
-    // Update displayed values
-    vertexPushValue.textContent = vertexPushSlider.value;
-    edgePullValue.textContent = edgePullSlider.value;
-    boundaryPushValue.textContent = boundaryPushSlider.value;
-    stallRotationValue.textContent = stallRotationSlider.value;
-    groupPullValue.textContent = groupPullSlider.value;
-    groupsPushValue.textContent = groupsPushSlider.value;
-    groupSpacingValue.textContent = groupSpacingSlider.value;
-    edgesPushValue.textContent = edgesPushSlider.value;
-    edgeVertPushValue.textContent = edgeVertPushSlider.value;
+    graph = generateTreeGraph(nodes);
+    //graph = generateRandomConnectedGraph(graph, nodes, 10);
+    
+    initialiseSliders();
+    eventHandlers();
 }
 
 function draw(){
+    frameCount++;
+    if(frameCount % 15 === 0) {
+        temperature -= 0.1/Math.sqrt(nodes);
+        if(temperature < 0) {
+            temperature = 0;
+        }
+        console.log(`Temperature: ${temperature}`);
+    }
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let backgroundColour = '#FFFFF0';
     ctx.fillStyle = backgroundColour;
@@ -226,7 +87,7 @@ function addEdgeFromInputs() {
 }
 
 function generateTreeGraph(numVertices) {
-    graph = new Graph(); // reset graph
+    graph = new Graph(numVertices); // reset graph
     
     if (numVertices < 1) return;
     
@@ -290,6 +151,187 @@ function generateRandomConnectedGraph(graph, nodes, extraEdges = 0) {
     return graph;
 }
 
+function eventHandlers() {
+    // Canvas mouse events for panning
+    canvas.addEventListener('mousedown', function(e) {
+        isPanning = true;
+        panStart.x = e.clientX - panOffset.x;
+        panStart.y = e.clientY - panOffset.y;
+    });
+    
+    canvas.addEventListener('mousemove', function(e) {
+        if (isPanning) {
+            panOffset.x = e.clientX - panStart.x;
+            panOffset.y = e.clientY - panStart.y;
+        }
+    });
+    
+    canvas.addEventListener('mouseup', function(e) {
+        isPanning = false;
+    });
+    
+    canvas.addEventListener('mouseleave', function(e) {
+        isPanning = false;
+    });
+    
+    // Mouse wheel for zooming
+    canvas.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const zoomIntensity = 0.1;
+        let mouseX = e.offsetX;
+        let mouseY = e.offsetY;
+        let wheel = e.deltaY < 0 ? 1 : -1;
+        let zoom = Math.exp(wheel * zoomIntensity);
+    
+        // Adjust panOffset so zoom is centered on mouse
+        panOffset.x = mouseX - (mouseX - panOffset.x) * zoom;
+        panOffset.y = mouseY - (mouseY - panOffset.y) * zoom;
+    
+        scale *= zoom;
+        scale = Math.max(scaleMin, Math.min(scaleMax, scale));
+    });
+    
+}
+function initialiseSliders(){
+    // Vertex Push
+    const vertexPushSlider = document.getElementById('vertexPushSlider');
+    const vertexPushValue = document.getElementById('vertexPushValue');
+    vertexPushSlider.value = 100;
+    vertexPushSlider.min = 10;
+    vertexPushSlider.max = 500;
+    vertexPushSlider.step = 1;
+    vertexPushValue.textContent = vertexPushSlider.value;
+    vertexPushSlider.oninput = function() {
+        graph.vertexPushConstant = parseFloat(this.value);
+        vertexPushValue.textContent = this.value;
+    };
+
+    // Edge Pull
+    const edgePullSlider = document.getElementById('edgePullSlider');
+    const edgePullValue = document.getElementById('edgePullValue');
+    edgePullSlider.value = 0.05;
+    edgePullSlider.min = 0.01;
+    edgePullSlider.max = 0.5;
+    edgePullSlider.step = 0.01;
+    edgePullValue.textContent = edgePullSlider.value;
+    edgePullSlider.oninput = function() {
+        graph.edgePullConstant = parseFloat(this.value);
+        edgePullValue.textContent = this.value;
+    };
+
+    // Boundary Push
+    const boundaryPushSlider = document.getElementById('boundaryPushSlider');
+    const boundaryPushValue = document.getElementById('boundaryPushValue');
+    boundaryPushSlider.value = 10;
+    boundaryPushSlider.min = 1;
+    boundaryPushSlider.max = 100;
+    boundaryPushSlider.step = 1;
+    boundaryPushValue.textContent = boundaryPushSlider.value;
+    boundaryPushSlider.oninput = function() {
+        graph.boundaryPushConstant = parseFloat(this.value);
+        boundaryPushValue.textContent = this.value;
+    };
+
+    // Stall Rotation
+    const stallRotationSlider = document.getElementById('stallRotationSlider');
+    const stallRotationValue = document.getElementById('stallRotationValue');
+    stallRotationSlider.value = 0.5;
+    stallRotationSlider.min = 0;
+    stallRotationSlider.max = 0.5;
+    stallRotationSlider.step = 0.01;
+    stallRotationValue.textContent = stallRotationSlider.value;
+    stallRotationSlider.oninput = function() {
+        graph.stallRotationConstant = parseFloat(this.value);
+        stallRotationValue.textContent = this.value;
+    };
+
+    // Group Pull
+    const groupPullSlider = document.getElementById('groupPullSlider');
+    const groupPullValue = document.getElementById('groupPullValue');
+    groupPullSlider.value = 0.01;
+    groupPullSlider.min = 0.001;
+    groupPullSlider.max = 0.05;
+    groupPullSlider.step = 0.001;
+    groupPullValue.textContent = groupPullSlider.value;
+    groupPullSlider.oninput = function() {
+        graph.groupPullConstant = parseFloat(this.value);
+        groupPullValue.textContent = this.value;
+    };
+
+    // Groups Push
+    const groupsPushSlider = document.getElementById('groupsPushSlider');
+    const groupsPushValue = document.getElementById('groupsPushValue');
+    groupsPushSlider.value = 30;
+    groupsPushSlider.min = 1;
+    groupsPushSlider.max = 100;
+    groupsPushSlider.step = 1;
+    groupsPushValue.textContent = groupsPushSlider.value;
+    groupsPushSlider.oninput = function() {
+        graph.groupsPushConstant = parseFloat(this.value);
+        groupsPushValue.textContent = this.value;
+    };
+
+    // Group Spacing
+    const groupSpacingSlider = document.getElementById('groupSpacingSlider');
+    const groupSpacingValue = document.getElementById('groupSpacingValue');
+    groupSpacingSlider.value = 0.2;
+    groupSpacingSlider.min = 0.01;
+    groupSpacingSlider.max = 1;
+    groupSpacingSlider.step = 0.01;
+    groupSpacingValue.textContent = groupSpacingSlider.value;
+    groupSpacingSlider.oninput = function() {
+        graph.groupSpacingConstant = parseFloat(this.value);
+        groupSpacingValue.textContent = this.value;
+    };
+
+    // Edges Push
+    const edgesPushSlider = document.getElementById('edgesPushSlider');
+    const edgesPushValue = document.getElementById('edgesPushValue');
+    edgesPushSlider.value = 0.1;
+    edgesPushSlider.min = 0.01;
+    edgesPushSlider.max = 1;
+    edgesPushSlider.step = 0.01;
+    edgesPushValue.textContent = edgesPushSlider.value;
+    edgesPushSlider.oninput = function() {
+        graph.edgesPushConstant = parseFloat(this.value);
+        edgesPushValue.textContent = this.value;
+    };
+
+    // Edge-Vertex Push
+    const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
+    const edgeVertPushValue = document.getElementById('edgeVertPushValue');
+    edgeVertPushSlider.value = 0.1;
+    edgeVertPushSlider.min = 0.01;
+    edgeVertPushSlider.max = 1;
+    edgeVertPushSlider.step = 0.01;
+    edgeVertPushValue.textContent = edgeVertPushSlider.value;
+    edgeVertPushSlider.oninput = function() {
+        graph.edgeVertPushConstant = parseFloat(this.value);
+        edgeVertPushValue.textContent = this.value;
+    };
+
+    // Set graph constants to default values
+    graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
+    graph.edgePullConstant = parseFloat(edgePullSlider.value);
+    graph.boundaryPushConstant = parseFloat(boundaryPushSlider.value);
+    graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
+    graph.groupPullConstant = parseFloat(groupPullSlider.value);
+    graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
+    graph.groupSpacingConstant = parseFloat(groupSpacingSlider.value);
+    graph.edgesPushConstant = parseFloat(edgesPushSlider.value);
+    graph.edgeVertPushConstant = parseFloat(edgeVertPushSlider.value);
+
+    // Update displayed values
+    vertexPushValue.textContent = vertexPushSlider.value;
+    edgePullValue.textContent = edgePullSlider.value;
+    boundaryPushValue.textContent = boundaryPushSlider.value;
+    stallRotationValue.textContent = stallRotationSlider.value;
+    groupPullValue.textContent = groupPullSlider.value;
+    groupsPushValue.textContent = groupsPushSlider.value;
+    groupSpacingValue.textContent = groupSpacingSlider.value;
+    edgesPushValue.textContent = edgesPushSlider.value;
+    edgeVertPushValue.textContent = edgeVertPushSlider.value;
+}
 
 
 setup();

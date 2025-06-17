@@ -1,4 +1,12 @@
+/**
+ * Utility class for 2D math operations.
+ */
 class Math2D {
+    /**
+     * Returns the midpoint of a group of points.
+     * @param {Array} group - Array of points.
+     * @returns {Object}
+     */
     static getMidpoint(group){
         let points = [];
         for(const v of group){
@@ -14,9 +22,14 @@ class Math2D {
         }
         return new Point2D(sumX/n, sumY/n);
     }
-    /*
-    direction is for attraction or repulsion;
-    */
+    /**
+     * Applies a force between two vertices.
+     * @param {Vertex} vertexA
+     * @param {Vertex} vertexB
+     * @param {number} forceMag
+     * @param {Object} vectorAB
+     * @param {number} [direction=1]
+     */
     static applyForce(vertexA, vertexB, forceMag, vectorAB, direction=1){
         // Calculate force components in x and y directions
         const forceX = vectorAB.x * forceMag * direction;
@@ -30,6 +43,11 @@ class Math2D {
         vertexB.fx -= forceX;
         vertexB.fy -= forceY;
     }
+    /**
+     * Returns hub connections in the graph.
+     * @param {Graph} graph
+     * @returns {Array}
+     */
     static hubConnections(graph){
         let vertices = graph.vertices;
         const n = vertices.length;
@@ -55,6 +73,11 @@ class Math2D {
         }
         return groupings;
     }
+    /**
+     * Calculates degree counts for the graph and stores them in respective vertex object.
+     * @param {Graph} graph
+     * 
+     */
     static degreeCount(graph){
         const edges = graph.edges;
         for(const edge of edges){
@@ -65,14 +88,20 @@ class Math2D {
             vertexB.degrees++;
         }
     }
+    /**
+     * Calculates the distance between two points.
+     * @param {Object} pointA
+     * @param {Object} pointB
+     * @returns {number}
+     */
     static distanceBetween(pointA, pointB){
         const dx = Math.abs(pointA.x - pointB.x);
         const dy = Math.abs(pointA.y - pointB.y);
         return Math.sqrt( (dx ** 2) + (dy ** 2) );
     }
-/*  Gets Vector from pointA to pointB
- *  Normalises the Vector
- */
+    /*  Gets Vector from pointA to pointB
+     *  Normalises the Vector
+     */
     static vectorFrom(pointA, pointB){
         const dx = pointB.x - pointA.x;
         const dy = pointB.y - pointA.y;

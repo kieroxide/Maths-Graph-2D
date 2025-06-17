@@ -1,15 +1,28 @@
+/**
+ * Represents a vertex (node) in a 2D graph.
+ */
 class Vertex {
-    constructor(nextID, radius = 30, mass = 0.001){
+    /**
+     * @param {number} nextID Unique identifier for the vertex.
+     * @param {number} maxSpeed Maximum speed for movement.
+     * @param {number} [radius=30] Radius for drawing the vertex.
+     * @param {number} [mass=0.001] Mass of the vertex.
+     */
+    constructor(nextID, maxSpeed, radius = 30, mass = 0.001){
         this.id = nextID;
         this.degrees = 0;
+
         // Randomize initial position
         this.x = canvas.width * Math.random();
         this.y = canvas.height * Math.random();
+
         this.position = new Point2D(this.x , this.y)
+
         this.neighboursID = new Set();
+
         this.radius = radius;
         this.mass = mass;
-        this.maxSpeed = 50;
+        this.maxSpeed = maxSpeed;
 
         //force
         this.fx = 0;
@@ -22,6 +35,10 @@ class Vertex {
         this.vy = 0;
 
     }
+    
+    /**
+     * Calculates next draw position using velocity and force calculations.
+     */
     updatePosition(){
         let maxSpeed = this.maxSpeed * temperature;
         this.ax = this.fx / this.mass;
@@ -41,8 +58,8 @@ class Vertex {
         if(Math.abs(this.vx) > minSpeed)  this.x += this.vx;
         if(Math.abs(this.vy) > minSpeed)  this.y += this.vy;
 
-        this.vx *= 0.95;
-        this.vy *= 0.95;
+        this.vx *= 0.97;
+        this.vy *= 0.97;
 
         this.position.x = this.x;
         this.position.y = this.y;
@@ -51,6 +68,9 @@ class Vertex {
         this.fy = 0;
     }
 
+    /**
+     * Draws the vertex on the canvas.
+     */
     draw(){
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); 
@@ -64,6 +84,11 @@ class Vertex {
         ctx.fillStyle = "black";         
         ctx.fillText(`${this.id}`, this.x, this.y);
     }
+
+    /**
+     * Checks if the vertex is out of canvas bounds.
+     * @returns {boolean}
+     */
     outofBounds(){
         let screenX = this.x * scale + panOffset.x;
         let screenY = this.y * scale + panOffset.y;
