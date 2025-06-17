@@ -20,6 +20,33 @@ class Graph{
         this.groupSpacingConstant = 0;
         this.edgesPushConstant = 0;
         this.edgeVertPushConstant = 0;
+        this.hubPullConstant = 0;
+    }
+    /**
+     * 
+     */
+    applyHubsPull(){
+        const groups = this.groups;
+        const n = groups.length;
+        const forceConstant = this.hubPullConstant;
+
+        for(let i = 0; i < n; i++){
+            for(let j = i + 1; j < n; j++){
+                const hubA = groups[i][0];
+                const hubB = groups[j][0];
+                if(this.edgeExists(hubA, hubB)){
+                    const direction = Math2D.vectorFrom(hubA.position, hubB.position);
+                    const distance = Math2D.distanceBetween(hubA.position, hubB.position);
+                    const forceMag = distance * distance * forceConstant;
+                    const fx = forceMag * direction.x;
+                    const fy = forceMag * direction.y;
+                    hubA.fx += fx;
+                    hubA.fy += fy;
+                    hubB.fx -= fx;
+                    hubB.fy -= fy;
+                }
+            }
+        }
     }
     /**
      * Applies repulsion between edge midpoints and vertices.
@@ -70,7 +97,7 @@ class Graph{
 
                 let distance = Math2D.distanceBetween(midA, midB);
                 if (distance === 0) distance = 0.01;
-            
+                if (distance > 200) continue;
                 const force = forceConstant / distance;
                 const fx = vectorAB.x * force;
                 const fy = vectorAB.y * force;
@@ -155,6 +182,7 @@ class Graph{
 
                     const distanceBetween = Math2D.distanceBetween(pointA, pointB);
                     // Get vector from A to B
+                    if(distanceBetween > 50) continue;
                     const vectorAB = Math2D.vectorFrom(pointA, pointB);
                     // Calculate force magnitude proportional to how far beyond sweet spot
                     let forceMagnitude = 0.0001 * forceConstant * (distanceBetween);
@@ -218,8 +246,8 @@ class Graph{
                 if(distance === 0) distance = 0.1; // division by zero avoidance
                 //if distance too close 
                 //calculates repulsion force vector
-                const d = distance;
-                const forceMagnitude = forceConstant / (d * d + 10);
+                const d = Math.abs(distance - 60);
+                const forceMagnitude = forceConstant / (d ** 2);
                 const vectorAB = Math2D.vectorFrom(pointA, pointB);
                 Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
             }
@@ -241,7 +269,7 @@ class Graph{
             if(distanceBetween === 0) distanceBetween = 0.1; // Avoid division by zero
             // Calculate force magnitude proportional to how far beyond sweet spot
             const d = distanceBetween;
-            let forceMagnitude = 0.01 * forceConstant * d;
+            let forceMagnitude = 0.0005 * forceConstant * d;
             Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
 
 
@@ -263,7 +291,6 @@ class Graph{
     draw(){
         this.applyVertexPhysics();
         this.applyEdgePhysics();
-        //this.applyBoundaryPhysics();
         this.checkRotations();
         this.groupingPhysics();
         this.groupRepulsion();
@@ -271,6 +298,7 @@ class Graph{
         this.applyEdgeRepulsion();
         this.applyEdgeVerticesRepulsion();
         //this.averageForce();
+        this.applyHubsPull();
         this.updateVertexPosition();
         for(const edge of this.edges){
             edge.draw();

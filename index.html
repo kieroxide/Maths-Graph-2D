@@ -14,32 +14,32 @@
             <input id="id2" type="number" placeholder="To ID">
             <button onclick="addEdgeFromInputs()">Add Edge</button>
 
-            <label for="vertexPushSlider">Vertex Push: <span id="vertexPushValue">100</span></label>
-            <input type="range" id="vertexPushSlider" min="10" max="500" value="10" step="1">
+            <label for="vertexPushSlider">Vertex Push: <span id="vertexPushValue">20</span></label>
+            <input type="range" id="vertexPushSlider" min="1" max="200" value="20" step="1">
 
-            <label for="edgePullSlider">Edge Pull: <span id="edgePullValue">0.05</span></label>
-            <input type="range" id="edgePullSlider" min="0.01" max="0.5" value="0.05" step="0.01">
-
-            <label for="boundaryPushSlider">Boundary Push: <span id="boundaryPushValue">10</span></label>
-            <input type="range" id="boundaryPushSlider" min="1" max="100" value="10" step="1">
-
+            <label for="edgePullSlider">Edge Pull: <span id="edgePullValue">0.2</span></label>
+            <input type="range" id="edgePullSlider" min="0.01" max="1" value="0.2" step="0.01">
+            
             <label for="stallRotationSlider">Stall Rotation: <span id="stallRotationValue">0.05</span></label>
             <input type="range" id="stallRotationSlider" min="0" max="0.5" value="0.05" step="0.01">
 
-            <label for="groupPullSlider">Group Pull: <span id="groupPullValue">0.05</span></label>
-            <input type="range" id="groupPullSlider" min="0.01" max="0.5" value="0.05" step="0.01">
+            <label for="groupPullSlider">Group Pull: <span id="groupPullValue">0.01</span></label>
+            <input type="range" id="groupPullSlider" min="0.001" max="0.05" value="0.01" step="0.001">
 
-            <label for="groupsPushSlider">Groups Push: <span id="groupsPushValue">10</span></label>
-            <input type="range" id="groupsPushSlider" min="1" max="100" value="100" step="1">
+            <label for="groupsPushSlider">Groups Push: <span id="groupsPushValue">60</span></label>
+            <input type="range" id="groupsPushSlider" min="10" max="100" value="60" step="1">
 
-            <label for="groupSpacingSlider">Group Spacing: <span id="groupSpacingValue">0.1</span></label>
-            <input type="range" id="groupSpacingSlider" min="0.01" max="1" value="0.1" step="0.01">
+            <label for="groupSpacingSlider">Group Spacing: <span id="groupSpacingValue">0.4</span></label>
+            <input type="range" id="groupSpacingSlider" min="0.05" max="1" value="0.4" step="0.01">
 
             <label for="edgesPushSlider">Edges Push: <span id="edgesPushValue">0.1</span></label>
             <input type="range" id="edgesPushSlider" min="0.01" max="1" value="0.1" step="0.01">
 
             <label for="edgeVertPushSlider">Edge-Vertex Push: <span id="edgeVertPushValue">0.1</span></label>
             <input type="range" id="edgeVertPushSlider" min="0.01" max="1" value="0.1" step="0.01">
+
+            <label for="hubPullSlider">Hub Pull: <span id="hubPullValue">0.05</span></label>
+            <input type="range" id="hubPullSlider" min="0.01" max="1" value="0.05" step="0.01">
         </div>
     </div>
     <script src="js/classes/Math2D.js"></script>

@@ -57,33 +57,35 @@ class Handler {
         // Vertex Push
         const vertexPushSlider = document.getElementById('vertexPushSlider');
         const vertexPushValue = document.getElementById('vertexPushValue');
-        vertexPushSlider.value = 100;
-        vertexPushSlider.min = 10;
-        vertexPushSlider.max = 500;
+        vertexPushSlider.value = 20;
+        vertexPushSlider.min = 1;
+        vertexPushSlider.max = 200;
         vertexPushSlider.step = 1;
         vertexPushValue.textContent = vertexPushSlider.value;
         vertexPushSlider.oninput = function() {
             graph.vertexPushConstant = parseFloat(this.value);
             vertexPushValue.textContent = this.value;
         };
+        graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
 
         // Edge Pull
         const edgePullSlider = document.getElementById('edgePullSlider');
         const edgePullValue = document.getElementById('edgePullValue');
-        edgePullSlider.value = 0.05;
+        edgePullSlider.value = 0.2;
         edgePullSlider.min = 0.01;
-        edgePullSlider.max = 0.5;
+        edgePullSlider.max = 1;
         edgePullSlider.step = 0.01;
         edgePullValue.textContent = edgePullSlider.value;
         edgePullSlider.oninput = function() {
             graph.edgePullConstant = parseFloat(this.value);
             edgePullValue.textContent = this.value;
         };
+        graph.edgePullConstant = parseFloat(edgePullSlider.value);
 
         // Stall Rotation
         const stallRotationSlider = document.getElementById('stallRotationSlider');
         const stallRotationValue = document.getElementById('stallRotationValue');
-        stallRotationSlider.value = 0.5;
+        stallRotationSlider.value = 0.05;
         stallRotationSlider.min = 0;
         stallRotationSlider.max = 0.5;
         stallRotationSlider.step = 0.01;
@@ -92,6 +94,7 @@ class Handler {
             graph.stallRotationConstant = parseFloat(this.value);
             stallRotationValue.textContent = this.value;
         };
+        graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
 
         // Group Pull
         const groupPullSlider = document.getElementById('groupPullSlider');
@@ -105,12 +108,13 @@ class Handler {
             graph.groupPullConstant = parseFloat(this.value);
             groupPullValue.textContent = this.value;
         };
+        graph.groupPullConstant = parseFloat(groupPullSlider.value);
 
         // Groups Push
         const groupsPushSlider = document.getElementById('groupsPushSlider');
         const groupsPushValue = document.getElementById('groupsPushValue');
-        groupsPushSlider.value = 30;
-        groupsPushSlider.min = 1;
+        groupsPushSlider.value = 60;
+        groupsPushSlider.min = 10;
         groupsPushSlider.max = 100;
         groupsPushSlider.step = 1;
         groupsPushValue.textContent = groupsPushSlider.value;
@@ -118,12 +122,13 @@ class Handler {
             graph.groupsPushConstant = parseFloat(this.value);
             groupsPushValue.textContent = this.value;
         };
+        graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
 
         // Group Spacing
         const groupSpacingSlider = document.getElementById('groupSpacingSlider');
         const groupSpacingValue = document.getElementById('groupSpacingValue');
-        groupSpacingSlider.value = 0.2;
-        groupSpacingSlider.min = 0.01;
+        groupSpacingSlider.value = 0.4;
+        groupSpacingSlider.min = 0.05;
         groupSpacingSlider.max = 1;
         groupSpacingSlider.step = 0.01;
         groupSpacingValue.textContent = groupSpacingSlider.value;
@@ -131,6 +136,7 @@ class Handler {
             graph.groupSpacingConstant = parseFloat(this.value);
             groupSpacingValue.textContent = this.value;
         };
+        graph.groupSpacingConstant = parseFloat(groupSpacingSlider.value);
 
         // Edges Push
         const edgesPushSlider = document.getElementById('edgesPushSlider');
@@ -144,6 +150,7 @@ class Handler {
             graph.edgesPushConstant = parseFloat(this.value);
             edgesPushValue.textContent = this.value;
         };
+        graph.edgesPushConstant = parseFloat(edgesPushSlider.value);
 
         // Edge-Vertex Push
         const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
@@ -157,16 +164,21 @@ class Handler {
             graph.edgeVertPushConstant = parseFloat(this.value);
             edgeVertPushValue.textContent = this.value;
         };
-
-        // Set graph constants to default values
-        graph.vertexPushConstant = parseFloat(vertexPushSlider.value);
-        graph.edgePullConstant = parseFloat(edgePullSlider.value);
-        graph.stallRotationConstant = parseFloat(stallRotationSlider.value);
-        graph.groupPullConstant = parseFloat(groupPullSlider.value);
-        graph.groupsPushConstant = parseFloat(groupsPushSlider.value);
-        graph.groupSpacingConstant = parseFloat(groupSpacingSlider.value);
-        graph.edgesPushConstant = parseFloat(edgesPushSlider.value);
         graph.edgeVertPushConstant = parseFloat(edgeVertPushSlider.value);
+
+        // Hub Pull
+        const hubPullSlider = document.getElementById('hubPullSlider');
+        const hubPullValue = document.getElementById('hubPullValue');
+        hubPullSlider.value = 1;
+        hubPullSlider.min = 0.01;
+        hubPullSlider.max = 1;
+        hubPullSlider.step = 0.01;
+        hubPullValue.textContent = hubPullSlider.value;
+        hubPullSlider.oninput = function() {
+            graph.hubPullConstant = parseFloat(this.value);
+            hubPullValue.textContent = this.value;
+        };
+        graph.hubPullConstant = parseFloat(hubPullSlider.value);
 
         // Update displayed values
         vertexPushValue.textContent = vertexPushSlider.value;
@@ -177,5 +189,6 @@ class Handler {
         groupSpacingValue.textContent = groupSpacingSlider.value;
         edgesPushValue.textContent = edgesPushSlider.value;
         edgeVertPushValue.textContent = edgeVertPushSlider.value;
+        hubPullValue.textContent = hubPullSlider.value;
     }
 }

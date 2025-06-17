@@ -6,7 +6,7 @@ class Scene{
         this.canvas;
         this.ctx;
 
-        this.nodes = 1000;
+        this.nodes = 600;
         this.graph = new Graph(this.nodes);
 
         this.isPanning = false;
@@ -27,7 +27,7 @@ class Scene{
     draw(){
         this.frameCount++;
         if(this.frameCount % 15 === 0) {
-            this.temperature -= 0.1/Math.sqrt(this.nodes);
+            this.temperature -= 0.1/this.nodes ** 0.5;
             if(this.temperature < 0) {
                 this.temperature = 0;
             }
