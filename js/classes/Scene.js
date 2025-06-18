@@ -5,7 +5,7 @@ class Scene{
 
         this.canvas;
         this.ctx;
-        this.sweetspot = 100;
+        this.sweetspot = 125;
         this.nodes = 600;
         this.graph = new Graph(this.nodes);
 

@@ -8,7 +8,7 @@ class Vertex {
      * @param {number} [radius=30] Radius for drawing the vertex.
      * @param {number} [mass=0.001] Mass of the vertex.
      */
-    constructor(nextID, maxSpeed, radius = 30, mass = 0.001){
+    constructor(nextID, maxSpeed, radius = 30, mass = 1){
         this.id = nextID;
         this.degrees = 0;
 
@@ -54,12 +54,12 @@ class Vertex {
             this.vx *= scale;
             this.vy *= scale;
         }
-        let minSpeed = this.maxSpeed * 0.1;
+        let minSpeed = this.maxSpeed * 0.01;
         if(Math.abs(this.vx) > minSpeed)  this.x += this.vx;
         if(Math.abs(this.vy) > minSpeed)  this.y += this.vy;
 
-        this.vx *= 0.2;
-        this.vy *= 0.2;
+        this.vx *= 0.96;
+        this.vy *= 0.96;
 
         this.position.x = this.x;
         this.position.y = this.y;

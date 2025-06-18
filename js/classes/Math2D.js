@@ -4,11 +4,12 @@
 class Math2D {
 
     static calculatePullForce(constant, distance, sweetspot = 0){
-        const maxForce = 0.05;
+        const maxForce = 1.5;
         return Math.min(maxForce, constant * (distance - sweetspot));
     }
-    static calculatePushForce(constant, distance){
-        return constant/(distance ** 1.85);
+    static calculatePushForce(constant, distance, power){
+        const force =  constant/(distance ** power);
+        return force;
     }
     /**
      * Returns the midpoint of a group of points.
@@ -88,6 +89,13 @@ class Math2D {
      */
     static degreeCount(graph){
         const edges = graph.edges;
+        for(const edge of edges){
+            const vertexA = edge.vertexTo;
+            const vertexB = edge.vertexFrom;
+            
+            vertexA.degrees = 0;
+            vertexB.degrees = 0;
+        }
         for(const edge of edges){
             const vertexA = edge.vertexTo;
             const vertexB = edge.vertexFrom;
