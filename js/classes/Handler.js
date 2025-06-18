@@ -57,10 +57,10 @@ class Handler {
         // Vertex Push
         const vertexPushSlider = document.getElementById('vertexPushSlider');
         const vertexPushValue = document.getElementById('vertexPushValue');
-        vertexPushSlider.value = 20;
-        vertexPushSlider.min = 1;
-        vertexPushSlider.max = 200;
-        vertexPushSlider.step = 1;
+        vertexPushSlider.value = 10; 
+        vertexPushSlider.min = 0;
+        vertexPushSlider.max = 10;
+        vertexPushSlider.step = 0.1;
         vertexPushValue.textContent = vertexPushSlider.value;
         vertexPushSlider.oninput = function() {
             graph.vertexPushConstant = parseFloat(this.value);
@@ -71,8 +71,8 @@ class Handler {
         // Edge Pull
         const edgePullSlider = document.getElementById('edgePullSlider');
         const edgePullValue = document.getElementById('edgePullValue');
-        edgePullSlider.value = 0.2;
-        edgePullSlider.min = 0.01;
+        edgePullSlider.value = 0.15; 
+        edgePullSlider.min = 0;
         edgePullSlider.max = 1;
         edgePullSlider.step = 0.01;
         edgePullValue.textContent = edgePullSlider.value;
@@ -87,7 +87,7 @@ class Handler {
         const stallRotationValue = document.getElementById('stallRotationValue');
         stallRotationSlider.value = 0.05;
         stallRotationSlider.min = 0;
-        stallRotationSlider.max = 0.5;
+        stallRotationSlider.max = 1;
         stallRotationSlider.step = 0.01;
         stallRotationValue.textContent = stallRotationSlider.value;
         stallRotationSlider.oninput = function() {
@@ -100,8 +100,8 @@ class Handler {
         const groupPullSlider = document.getElementById('groupPullSlider');
         const groupPullValue = document.getElementById('groupPullValue');
         groupPullSlider.value = 0.01;
-        groupPullSlider.min = 0.001;
-        groupPullSlider.max = 0.05;
+        groupPullSlider.min = 0;
+        groupPullSlider.max = 1000;
         groupPullSlider.step = 0.001;
         groupPullValue.textContent = groupPullSlider.value;
         groupPullSlider.oninput = function() {
@@ -113,9 +113,9 @@ class Handler {
         // Groups Push
         const groupsPushSlider = document.getElementById('groupsPushSlider');
         const groupsPushValue = document.getElementById('groupsPushValue');
-        groupsPushSlider.value = 60;
-        groupsPushSlider.min = 10;
-        groupsPushSlider.max = 100;
+        groupsPushSlider.value = 30; 
+        groupsPushSlider.min = 0;
+        groupsPushSlider.max = 1000;
         groupsPushSlider.step = 1;
         groupsPushValue.textContent = groupsPushSlider.value;
         groupsPushSlider.oninput = function() {
@@ -127,9 +127,9 @@ class Handler {
         // Group Spacing
         const groupSpacingSlider = document.getElementById('groupSpacingSlider');
         const groupSpacingValue = document.getElementById('groupSpacingValue');
-        groupSpacingSlider.value = 0.4;
-        groupSpacingSlider.min = 0.05;
-        groupSpacingSlider.max = 1;
+        groupSpacingSlider.value = 0.2; 
+        groupSpacingSlider.min = 0;
+        groupSpacingSlider.max = 1000;
         groupSpacingSlider.step = 0.01;
         groupSpacingValue.textContent = groupSpacingSlider.value;
         groupSpacingSlider.oninput = function() {
@@ -141,9 +141,9 @@ class Handler {
         // Edges Push
         const edgesPushSlider = document.getElementById('edgesPushSlider');
         const edgesPushValue = document.getElementById('edgesPushValue');
-        edgesPushSlider.value = 0.1;
-        edgesPushSlider.min = 0.01;
-        edgesPushSlider.max = 1;
+        edgesPushSlider.value = 0.05; 
+        edgesPushSlider.min = 0;
+        edgesPushSlider.max = 1000;
         edgesPushSlider.step = 0.01;
         edgesPushValue.textContent = edgesPushSlider.value;
         edgesPushSlider.oninput = function() {
@@ -155,9 +155,9 @@ class Handler {
         // Edge-Vertex Push
         const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
         const edgeVertPushValue = document.getElementById('edgeVertPushValue');
-        edgeVertPushSlider.value = 0.1;
-        edgeVertPushSlider.min = 0.01;
-        edgeVertPushSlider.max = 1;
+        edgeVertPushSlider.value = 0.05;
+        edgeVertPushSlider.min = 0;
+        edgeVertPushSlider.max = 1000;
         edgeVertPushSlider.step = 0.01;
         edgeVertPushValue.textContent = edgeVertPushSlider.value;
         edgeVertPushSlider.oninput = function() {
@@ -169,9 +169,9 @@ class Handler {
         // Hub Pull
         const hubPullSlider = document.getElementById('hubPullSlider');
         const hubPullValue = document.getElementById('hubPullValue');
-        hubPullSlider.value = 1;
-        hubPullSlider.min = 0.01;
-        hubPullSlider.max = 1;
+        hubPullSlider.value = 0.03; 
+        hubPullSlider.min = 0;
+        hubPullSlider.max = 1000;
         hubPullSlider.step = 0.01;
         hubPullValue.textContent = hubPullSlider.value;
         hubPullSlider.oninput = function() {
