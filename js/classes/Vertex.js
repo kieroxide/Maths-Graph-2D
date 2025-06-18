@@ -58,8 +58,8 @@ class Vertex {
         if(Math.abs(this.vx) > minSpeed)  this.x += this.vx;
         if(Math.abs(this.vy) > minSpeed)  this.y += this.vy;
 
-        this.vx *= 0.97;
-        this.vy *= 0.97;
+        this.vx *= 0.2;
+        this.vy *= 0.2;
 
         this.position.x = this.x;
         this.position.y = this.y;

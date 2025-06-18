@@ -11,7 +11,7 @@ class Graph{
         this.vertices = [];
         this.edges = [];
         this.groups = [];
-        this.maxSpeed = 10;
+        this.maxSpeed = 15;
         this.vertexPushConstant = 0;
         this.edgePullConstant = 0;
         this.stallRotationConstant = 0;
@@ -37,8 +37,8 @@ class Graph{
                 if(this.edgeExists(hubA, hubB)){
                     const direction = Math2D.vectorFrom(hubA.position, hubB.position);
                     const distance = Math2D.distanceBetween(hubA.position, hubB.position);
-                    if(distance < scene.sweetspot) continue;
-                    const forceMag = distance * distance * forceConstant;
+                    //if(distance < scene.sweetspot) continue;
+                    const forceMag = Math2D.calculatePullForce(forceConstant, distance);
                     const fx = forceMag * direction.x;
                     const fy = forceMag * direction.y;
                     hubA.fx += fx;
@@ -61,11 +61,11 @@ class Graph{
             for(const vertex of vertices){
                 if(vertex === edge.vertexTo || vertex === edge.vertexFrom) continue;
                 let distance = Math2D.distanceBetween(vertex.position, midA);
-                if(distance > scene.sweetspot) continue;
+                //if(distance > scene.sweetspot) continue;
                 if(distance === 0 ) distance = 0.001
                 const direction = Math2D.vectorFrom(vertex.position, midA);
                 const d = distance;
-                const forceMagnitude = forceConstant/d;
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance);
                 
                 const fx = forceMagnitude * direction.x;
                 const fy = forceMagnitude * direction.y;
@@ -105,8 +105,8 @@ class Graph{
 
                 let distance = Math2D.distanceBetween(midA, midB);
                 if (distance === 0) distance = 0.01;
-                if(distance > scene.sweetspot) continue;
-                const force = forceConstant / distance ** 2;
+                //if(distance > scene.sweetspot) continue;
+                const force = Math2D.calculatePushForce(forceConstant, distance);
                 const fx = vectorAB.x * force;
                 const fy = vectorAB.y * force;
             
@@ -136,9 +136,9 @@ class Graph{
                 const direction = Math2D.vectorFrom(hub, vertex);
                 const perpendicular = new Point2D(direction.y, -direction.x);
                 const distance = Math2D.distanceBetween(hub.position, vertex.position);
-                if(distance < scene.sweetspot) continue;
+                //if(distance < scene.sweetspot) continue;
                 const d = distance;
-                const forceMagnitude = forceConstant/(d * d);
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance);
                 vertex.fx += perpendicular.x * forceMagnitude;
                 vertex.fy += perpendicular.y * forceMagnitude;
             }
@@ -162,10 +162,10 @@ class Graph{
                 const groupB = groupMidpoints[j];
                 const vectorAB = Math2D.vectorFrom(groupA.midpoint, groupB.midpoint);
                 let distance = Math2D.distanceBetween(groupA.midpoint, groupB.midpoint)
-                if(distance < scene.sweetspot) continue;
+                //if(distance < scene.sweetspot) continue;
                 if(distance === 0) distance = 0.01;
                 const d = distance;
-                const forceMagnitude = forceConstant/(d*d);
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance);
                 for(const vertexA of groupA.group){
                     for(const vertexB of groupB.group){
                         Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
@@ -182,32 +182,29 @@ class Graph{
         const groups = this.groups;
         for(const group of groups){
             const n = group.length;
-            for(let i = 0; i < n; i++){
-                for(let j = i + 1; j < n; j++){
-                    const vertexA = group[i];
-                    const vertexB = group[j];
-
-                    const pointA = vertexA.position;
-                    const pointB = vertexB.position;
-
-                    const distanceBetween = Math2D.distanceBetween(pointA, pointB);
-                    // Get vector from A to B
-                    if(distanceBetween < scene.sweetspot) continue;
-                    const vectorAB = Math2D.vectorFrom(pointA, pointB);
-                    // Calculate force magnitude proportional to how far beyond sweet spot
-                    let forceMagnitude = forceConstant * (distanceBetween);
-                    //applies the force to the vertices
-                    Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
-                    }
-                }
+            const hub = group[0];
+            for(let i = 1; i < n; i++){
+                const vertexB = group[i];
+                const pointA = hub.position;
+                const pointB = vertexB.position;
+                const distance = Math2D.distanceBetween(pointA, pointB);
+                // Get vector from A to B
+                //if(distance < scene.sweetspot) continue;
+                const vectorAB = Math2D.vectorFrom(pointA, pointB);
+                // Calculate force magnitude proportional to how far beyond sweet spot
+                let forceMagnitude = Math2D.calculatePullForce(forceConstant, distance);
+                //applies the force to the vertices
+                Math2D.applyForce(hub, vertexB, forceMagnitude, vectorAB, 1);
             }
+        }
     }
+    
     /**
      * Checks and applies rotational adjustments.
      */
     checkRotations(){
-        const forceThreshold = 3; 
-        const velocityThreshold = 10;
+        const forceThreshold = 1; 
+        const velocityThreshold = 2;
         const rotationStrength = this.stallRotationConstant;
         const vertices = this.vertices;
         for (const v of vertices) {
@@ -252,12 +249,11 @@ class Graph{
                 const pointA = vertexA.position;
                 const pointB = vertexB.position;
                 let distance = Math2D.distanceBetween(pointA, pointB);
-                if(distance > scene.sweetspot) continue;
+                //if(distance > scene.sweetspot) continue;
                 if(distance === 0) distance = 0.1; // division by zero avoidance
 
                 //calculates repulsion force vector
-                const d = Math.abs(distance);
-                const forceMagnitude = forceConstant / (d ** 2);
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance);
                 const vectorAB = Math2D.vectorFrom(pointA, pointB);
                 Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
             }
@@ -273,14 +269,14 @@ class Graph{
             const vertexB = edge.vertexFrom;
             const pointA = vertexA.position;
             const pointB = vertexB.position;
-            let distanceBetween = Math2D.distanceBetween(pointA, pointB);
+            let distance = Math2D.distanceBetween(pointA, pointB);
             // Get vector from A to B
             const vectorAB = Math2D.vectorFrom(pointA, pointB);
-            if(distanceBetween === 0) distanceBetween = 0.1; // Avoid division by zero
-            if(distanceBetween < scene.sweetspot) continue;
+            if(distance === 0) distance = 0.1; // Avoid division by zero
+            //if(distance < scene.sweetspot) continue;
             // Calculate force magnitude proportional to how far beyond sweet spot
-            const d = distanceBetween;
-            let forceMagnitude = forceConstant * d;
+            const d = distance;
+            let forceMagnitude = Math2D.calculatePullForce(forceConstant, distance, scene.sweetspot);
             Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, 1);
 
 

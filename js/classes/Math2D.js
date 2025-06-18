@@ -2,6 +2,14 @@
  * Utility class for 2D math operations.
  */
 class Math2D {
+
+    static calculatePullForce(constant, distance, sweetspot = 0){
+        const maxForce = 0.05;
+        return Math.min(maxForce, constant * (distance - sweetspot));
+    }
+    static calculatePushForce(constant, distance){
+        return constant/(distance ** 1.85);
+    }
     /**
      * Returns the midpoint of a group of points.
      * @param {Array} group - Array of points.

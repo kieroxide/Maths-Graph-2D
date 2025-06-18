@@ -54,10 +54,11 @@ class Handler {
 
     static initialiseSliders(){
         let graph = scene.graph;
+
         // Vertex Push
         const vertexPushSlider = document.getElementById('vertexPushSlider');
         const vertexPushValue = document.getElementById('vertexPushValue');
-        vertexPushSlider.value = 10; 
+        vertexPushSlider.value = 2.0;
         vertexPushSlider.min = 0;
         vertexPushSlider.max = 10;
         vertexPushSlider.step = 0.1;
@@ -71,10 +72,10 @@ class Handler {
         // Edge Pull
         const edgePullSlider = document.getElementById('edgePullSlider');
         const edgePullValue = document.getElementById('edgePullValue');
-        edgePullSlider.value = 0.15; 
+        edgePullSlider.value = 0.0002;
         edgePullSlider.min = 0;
-        edgePullSlider.max = 1;
-        edgePullSlider.step = 0.01;
+        edgePullSlider.max = 0.01;
+        edgePullSlider.step = 0.000001;
         edgePullValue.textContent = edgePullSlider.value;
         edgePullSlider.oninput = function() {
             graph.edgePullConstant = parseFloat(this.value);
@@ -87,7 +88,7 @@ class Handler {
         const stallRotationValue = document.getElementById('stallRotationValue');
         stallRotationSlider.value = 0.05;
         stallRotationSlider.min = 0;
-        stallRotationSlider.max = 1;
+        stallRotationSlider.max = 0.5;
         stallRotationSlider.step = 0.01;
         stallRotationValue.textContent = stallRotationSlider.value;
         stallRotationSlider.oninput = function() {
@@ -99,10 +100,10 @@ class Handler {
         // Group Pull
         const groupPullSlider = document.getElementById('groupPullSlider');
         const groupPullValue = document.getElementById('groupPullValue');
-        groupPullSlider.value = 0.01;
+        groupPullSlider.value = 0.00001;
         groupPullSlider.min = 0;
-        groupPullSlider.max = 1000;
-        groupPullSlider.step = 0.001;
+        groupPullSlider.max = 0.0001;
+        groupPullSlider.step = 0.000001;
         groupPullValue.textContent = groupPullSlider.value;
         groupPullSlider.oninput = function() {
             graph.groupPullConstant = parseFloat(this.value);
@@ -113,10 +114,10 @@ class Handler {
         // Groups Push
         const groupsPushSlider = document.getElementById('groupsPushSlider');
         const groupsPushValue = document.getElementById('groupsPushValue');
-        groupsPushSlider.value = 30; 
+        groupsPushSlider.value = 0.5;
         groupsPushSlider.min = 0;
-        groupsPushSlider.max = 1000;
-        groupsPushSlider.step = 1;
+        groupsPushSlider.max = 25;
+        groupsPushSlider.step = 0.05;
         groupsPushValue.textContent = groupsPushSlider.value;
         groupsPushSlider.oninput = function() {
             graph.groupsPushConstant = parseFloat(this.value);
@@ -127,9 +128,9 @@ class Handler {
         // Group Spacing
         const groupSpacingSlider = document.getElementById('groupSpacingSlider');
         const groupSpacingValue = document.getElementById('groupSpacingValue');
-        groupSpacingSlider.value = 0.2; 
+        groupSpacingSlider.value = 0.1;
         groupSpacingSlider.min = 0;
-        groupSpacingSlider.max = 1000;
+        groupSpacingSlider.max = 1;
         groupSpacingSlider.step = 0.01;
         groupSpacingValue.textContent = groupSpacingSlider.value;
         groupSpacingSlider.oninput = function() {
@@ -141,9 +142,9 @@ class Handler {
         // Edges Push
         const edgesPushSlider = document.getElementById('edgesPushSlider');
         const edgesPushValue = document.getElementById('edgesPushValue');
-        edgesPushSlider.value = 0.05; 
+        edgesPushSlider.value = 10;
         edgesPushSlider.min = 0;
-        edgesPushSlider.max = 1000;
+        edgesPushSlider.max = 50;
         edgesPushSlider.step = 0.01;
         edgesPushValue.textContent = edgesPushSlider.value;
         edgesPushSlider.oninput = function() {
@@ -155,9 +156,9 @@ class Handler {
         // Edge-Vertex Push
         const edgeVertPushSlider = document.getElementById('edgeVertPushSlider');
         const edgeVertPushValue = document.getElementById('edgeVertPushValue');
-        edgeVertPushSlider.value = 0.05;
+        edgeVertPushSlider.value = 0.2;
         edgeVertPushSlider.min = 0;
-        edgeVertPushSlider.max = 1000;
+        edgeVertPushSlider.max = 2;
         edgeVertPushSlider.step = 0.01;
         edgeVertPushValue.textContent = edgeVertPushSlider.value;
         edgeVertPushSlider.oninput = function() {
@@ -169,10 +170,10 @@ class Handler {
         // Hub Pull
         const hubPullSlider = document.getElementById('hubPullSlider');
         const hubPullValue = document.getElementById('hubPullValue');
-        hubPullSlider.value = 0.03; 
+        hubPullSlider.value = 0.001;
         hubPullSlider.min = 0;
-        hubPullSlider.max = 1000;
-        hubPullSlider.step = 0.01;
+        hubPullSlider.max = 0.01;
+        hubPullSlider.step = 0.0001;
         hubPullValue.textContent = hubPullSlider.value;
         hubPullSlider.oninput = function() {
             graph.hubPullConstant = parseFloat(this.value);
