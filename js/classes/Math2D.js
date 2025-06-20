@@ -4,12 +4,14 @@
 class Math2D {
 
     static calculatePullForce(constant, distance, sweetspot = 0){
-        const maxForce = 1.5;
-        return Math.min(maxForce, constant * (distance - sweetspot));
+        const maxForce = 100;
+        const force = constant * (distance - sweetspot) * 0.05;
+        return Math.min(maxForce, force);
     }
     static calculatePushForce(constant, distance, power){
+        const maxForce = 100;
         const force =  constant/(distance ** power);
-        return force;
+        return Math.min(maxForce, force);
     }
     /**
      * Returns the midpoint of a group of points.

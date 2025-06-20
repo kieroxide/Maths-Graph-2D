@@ -11,7 +11,7 @@ class Graph{
         this.vertices = [];
         this.edges = [];
         this.groups = [];
-        this.maxSpeed = 50;
+        this.maxSpeed = 150;
         this.vertexPushConstant = 0;
         this.edgePullConstant = 0;
         this.stallRotationConstant = 0;
@@ -34,18 +34,16 @@ class Graph{
             for(let j = i + 1; j < n; j++){
                 const hubA = groups[i][0];
                 const hubB = groups[j][0];
-                if(this.edgeExists(hubA, hubB)){
-                    const direction = Math2D.vectorFrom(hubA.position, hubB.position);
-                    const distance = Math2D.distanceBetween(hubA.position, hubB.position);
-                    if(distance < Scene.sweetspot) continue;
-                    const forceMag = Math2D.calculatePullForce(forceConstant, distance, Scene.sweetspot);
-                    const fx = forceMag * direction.x;
-                    const fy = forceMag * direction.y;
-                    hubA.fx += fx;
-                    hubA.fy += fy;
-                    hubB.fx -= fx;
-                    hubB.fy -= fy;
-                }
+                const direction = Math2D.vectorFrom(hubA.position, hubB.position);
+                const distance = Math2D.distanceBetween(hubA.position, hubB.position);
+                if(distance < Scene.sweetspot) continue;
+                const forceMag = Math2D.calculatePullForce(forceConstant, distance, Scene.sweetspot);
+                const fx = forceMag * direction.x;
+                const fy = forceMag * direction.y;
+                hubA.fx += fx;
+                hubA.fy += fy;
+                hubB.fx -= fx;
+                hubB.fy -= fy;
             }
         }
     }
@@ -65,7 +63,7 @@ class Graph{
                 if(distance > Scene.sweetspot) continue;
                 if(distance === 0 ) distance = 0.001
                 const direction = Math2D.vectorFrom(vertex.position, midA);
-                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance, 1.1);
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance, 1);
                 
                 const fx = forceMagnitude * direction.x;
                 const fy = forceMagnitude * direction.y;
@@ -101,7 +99,7 @@ class Graph{
                 let distance = Math2D.distanceBetween(midA, midB);
                 if (distance === 0) distance = 0.01;
                 if(distance > Scene.sweetspot) continue;
-                const force = Math2D.calculatePushForce(forceConstant, distance, 1.05);
+                const force = Math2D.calculatePushForce(forceConstant, distance, 1.3);
                 const fx = vectorAB.x * force;
                 const fy = vectorAB.y * force;
                 edgeA.vertexFrom.fx -= fx;
@@ -191,26 +189,29 @@ class Graph{
      * Checks and applies rotational adjustments.
      */
     checkRotations(){
-        const forceThreshold = 1; 
-        const velocityThreshold = 2;
         const rotationStrength = this.stallRotationConstant;
         const vertices = this.vertices;
         for (const v of vertices) {
-            const forceMag = Math.sqrt(v.fx * v.fx + v.fy * v.fy);
-            const velMag = Math.sqrt(v.vx * v.vx + v.vy * v.vy);
-        
-            if (forceMag > forceThreshold && velMag < velocityThreshold) {
-                const direction = 1;
-                const rotFx = -v.fy * rotationStrength * direction;
-                const rotFy = v.fx * rotationStrength * direction;
-                // Add rotational force
-                v.fx += rotFx;
-                v.fy += rotFy;
+            let direction = 1;
+            const rotFxA = -v.fy * rotationStrength * direction;
+            const rotFyA = v.fx * rotationStrength * direction;
+            const magA = Math.sqrt(rotFxA ** 2 + rotFyA ** 2);
+            direction = -1;
+            const rotFxB = -v.fy * rotationStrength * direction;
+            const rotFyB = v.fx * rotationStrength * direction;
+            const magB = Math.sqrt(rotFxB ** 2 + rotFyB ** 2);
 
+            if(magA > magB ){
+                v.fx += rotFxA;
+                v.fy += rotFyA;
+            } 
+            else {
+                v.fx += rotFxB;
+                v.fy += rotFyB;
             }
         }
-
     }
+
     /**
      * Updates vertex positions.
      */
@@ -241,7 +242,7 @@ class Graph{
                 if(distance === 0) distance = 0.1; // division by zero avoidance
 
                 //calculates repulsion force vector
-                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance, 1.1);
+                const forceMagnitude = Math2D.calculatePushForce(forceConstant, distance, 1.4);
                 const vectorAB = Math2D.vectorFrom(pointA, pointB);
                 Math2D.applyForce(vertexA, vertexB, forceMagnitude, vectorAB, -1);
             }
@@ -284,12 +285,12 @@ class Graph{
         this.applyVertexPhysics();
         this.applyEdgePhysics();
         this.checkRotations();
-        this.groupingPhysics();
+        //this.groupingPhysics();
         this.groupRepulsion();
-        this.groupSpacing();
+        //this.groupSpacing();
         this.applyEdgeRepulsion();
         this.applyEdgeVerticesRepulsion();
-        //this.averageForce();
+        ////this.averageForce();
         this.applyHubsPull();
         this.updateVertexPosition();
         for(const edge of this.edges){

@@ -170,10 +170,10 @@ class Handler {
         // Hub Pull
         const hubPullSlider = document.getElementById('hubPullSlider');
         const hubPullValue = document.getElementById('hubPullValue');
-        hubPullSlider.value = 0.01;
-        hubPullSlider.min = 0.001;
-        hubPullSlider.max = 0.05;
-        hubPullSlider.step = 0.001;
+        hubPullSlider.value = 0.0005;
+        hubPullSlider.min = 0;
+        hubPullSlider.max = 0.01;
+        hubPullSlider.step = 0.0001;
         hubPullValue.textContent = hubPullSlider.value;
         hubPullSlider.oninput = function() {
             graph.hubPullConstant = parseFloat(this.value);
